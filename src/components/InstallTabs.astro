@@ -1,0 +1,110 @@
+---
+import CodePanel from './CodePanel.astro';
+import { snippets } from '../data/snippets';
+
+const tabs = [
+  {
+    id: 'docker',
+    label: 'Docker',
+    title: 'docker run（推荐）',
+    code: snippets.dockerRun,
+    lang: 'bash',
+    note: 'API :8888，UI :9999，数据卷 hindsight-data',
+  },
+  {
+    id: 'compose',
+    label: '外部 PostgreSQL',
+    title: 'docker compose',
+    code: snippets.dockerCompose,
+    lang: 'bash',
+    note: '适合已有 PG 实例或需要统一运维数据库的团队',
+  },
+  {
+    id: 'pip',
+    label: '裸机 pip',
+    title: 'pip install hindsight-api',
+    code: snippets.pipServer,
+    lang: 'bash',
+    note: 'Windows 与离线环境同样支持',
+  },
+  {
+    id: 'helm',
+    label: 'Kubernetes',
+    title: 'helm install',
+    code: snippets.helm,
+    lang: 'bash',
+    note: 'Helm chart 直接托管 PostgreSQL',
+  },
+] as const;
+---
+
+<div data-tabs>
+  <div
+    role="tablist"
+    aria-label="选择安装方式"
+    class="flex flex-wrap gap-1 border-b border-line"
+  >
+    {
+      tabs.map((tab, i) => (
+        <button
+          type="button"
+          role="tab"
+          id={`tab-${tab.id}`}
+          aria-controls={`panel-${tab.id}`}
+          aria-selected={i === 0 ? 'true' : 'false'}
+          tabindex={i === 0 ? 0 : -1}
+          class="relative -mb-px rounded-t-sm px-3.5 py-2.5 text-[14px] text-fg-subtle transition-colors duration-200 hover:text-fg data-[selected]:font-medium data-[selected]:text-fg data-[selected]:after:absolute data-[selected]:after:inset-x-3 data-[selected]:after:-bottom-px data-[selected]:after:h-px data-[selected]:after:bg-accent"
+        >
+          {tab.label}
+        </button>
+      ))
+    }
+  </div>
+
+  {
+    tabs.map((tab, i) => (
+      <div
+        role="tabpanel"
+        id={`panel-${tab.id}`}
+        aria-labelledby={`tab-${tab.id}`}
+        hidden={i !== 0}
+        class="pt-6"
+      >
+        <p class="mb-4 text-[14.5px] text-fg-subtle">{tab.note}</p>
+        <CodePanel code={tab.code} lang={tab.lang} title={tab.title} />
+      </div>
+    ))
+  }
+</div>
+
+<script>
+  const groups = document.querySelectorAll<HTMLElement>('[data-tabs]');
+
+  groups.forEach((group) => {
+    const tabs = Array.from(group.querySelectorAll<HTMLButtonElement>('[role="tab"]'));
+    const panels = tabs.map((tab) =>
+      document.getElementById(tab.getAttribute('aria-controls') ?? ''),
+    );
+
+    const select = (index: number) => {
+      tabs.forEach((tab, i) => {
+        const active = i === index;
+        tab.setAttribute('aria-selected', String(active));
+        tab.tabIndex = active ? 0 : -1;
+        tab.toggleAttribute('data-selected', active);
+        if (panels[i]) panels[i]!.hidden = !active;
+      });
+      tabs[index]?.focus();
+    };
+
+    tabs.forEach((tab, i) => {
+      tab.addEventListener('click', () => select(i));
+      tab.addEventListener('keydown', (event) => {
+        if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') return;
+        event.preventDefault();
+        const step = event.key === 'ArrowRight' ? 1 : -1;
+        select((i + step + tabs.length) % tabs.length);
+      });
+    });
+  });
+</script>

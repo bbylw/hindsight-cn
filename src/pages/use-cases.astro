@@ -1,0 +1,176 @@
+---
+import { Icon } from 'astro-icon/components';
+import DocLayout from '../layouts/DocLayout.astro';
+import { site } from '../data/site';
+
+const toc = [
+  { label: '按用户记忆', href: '#按用户记忆' },
+  { label: '自主执行的智能体', href: '#自主执行的智能体' },
+  { label: '更多模式', href: '#更多模式' },
+] as const;
+const roles = [
+  {
+    role: 'AI 项目经理',
+    need: '开放式任务推进',
+    text: '反思项目中需要规避的风险，把散落在历次会话里的经验沉淀为可复用的判断。',
+  },
+  {
+    role: '销售智能体',
+    need: '根据反馈改变行为',
+    text: '反思为何某些外联消息有回应、另一些没有，逼近人类销售的水准。',
+  },
+  {
+    role: '支持智能体',
+    need: '学习复杂任务',
+    text: '反思客户现有产品文档未能解答的问题所在，逐步补上知识盲区。',
+  },
+] as const;
+
+const loops = [
+  { term: '摄入', detail: '新的用户输入与工具调用通过 retain 进入 Hindsight。' },
+  { term: '富化', detail: '用自定义元数据丰富新记忆，隔离那些需要限定给特定用户的内容。' },
+  { term: '过滤', detail: '任何由此生成的原始记忆与心智模型，都可在检索相关记忆时按需过滤。' },
+] as const;
+---
+
+<DocLayout
+  title="应用场景"
+  eyebrow="Use cases"
+  toc={toc}
+  lead="Hindsight 既服务于对话式 AI 智能体，也服务于旨在自主执行任务的智能体。最理想的是那些需要融合记忆四项能力的智能体，也就是接近人类工作水平的 AI 员工。"
+>
+  <Fragment slot="header">
+    <ul class="mt-9 flex flex-wrap gap-2 xl:hidden">
+      {
+        toc.map((item) => (
+          <li>
+            <a
+              href={item.href}
+              class="inline-flex rounded-sm border border-line px-3 py-1.5 text-[13.5px] text-fg-muted transition-colors duration-200 hover:border-line-strong hover:text-fg"
+            >
+              {item.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </Fragment>
+
+  <p>
+    Hindsight 也可配合 n8n 等构建的简单 AI 工作流使用，但对这类应用可能有些杀鸡用牛刀。
+  </p>
+
+  <h2 id="按用户记忆">按用户记忆与聊天历史</h2>
+
+  <p>
+    你能用 Hindsight 做的最简单的场景之一，就是通过存储与召回与单个用户相关的记忆，来为 AI 聊天机器人及其他对话式智能体做个性化。
+  </p>
+
+  <p>该场景的典型需求大致如下：</p>
+
+  <div class="mt-8 grid gap-4 lg:grid-cols-2 lg:items-start">
+    <figure class="overflow-hidden rounded-lg border border-line bg-bg p-2 sm:p-3">
+      <img
+        src="/img/per-user-memory-requirements.png"
+        width="1080"
+        height="388"
+        alt="按用户记忆的典型需求示意：跨会话保留用户偏好、事实细节，并按用户隔离数据。"
+        class="w-full rounded-md bg-white"
+        loading="lazy"
+        decoding="async"
+      />
+      <figcaption class="px-2 pt-3 pb-1 text-[13px] text-fg-subtle">
+        典型需求：偏好、事实、对话连续性、数据隔离。
+      </figcaption>
+    </figure>
+
+    <figure class="overflow-hidden rounded-lg border border-line bg-bg p-2 sm:p-3">
+      <img
+        src="/img/per-user-memory-howto.png"
+        width="1080"
+        height="787"
+        alt="Hindsight 实现按用户记忆的流程示意：retain 时附带元数据，recall 与 reflect 时按元数据过滤。"
+        class="w-full rounded-md bg-white"
+        loading="lazy"
+        decoding="async"
+      />
+      <figcaption class="px-2 pt-3 pb-1 text-[13px] text-fg-subtle">
+        在 Hindsight 中满足这些需求很直接。
+      </figcaption>
+    </figure>
+  </div>
+
+  <h3>三步满足需求</h3>
+
+  <p>
+    当新的用户输入与工具调用通过 retain 操作被摄入 Hindsight 时，可用自定义元数据来丰富新记忆。元数据提供了一种便捷方式，用来隔离那些需要限定给特定用户的记忆。一旦喂入
+    retain 操作，任何由此生成的原始记忆与心智模型，都可在检索相关记忆时按需过滤。
+  </p>
+
+  <ol>
+    {
+      loops.map((loop) => (
+        <li>
+          <strong>{loop.term}：</strong>
+          {loop.detail}
+        </li>
+      ))
+    }
+  </ol>
+
+  <h2 id="自主执行的智能体">自主执行的智能体</h2>
+
+  <p>
+    更理想的应用场景是那些需要融合上述特性的智能体：需要应对开放式任务、根据用户反馈改变行为、并学习执行复杂任务以逼近人类工作水平的
+    AI 员工。reflect 正是为这类场景准备的入口。
+  </p>
+
+  <div class="mt-6 grid gap-px overflow-hidden rounded-lg border border-line bg-line">
+    {
+      roles.map((item) => (
+        <article class="grid gap-4 bg-bg p-5 sm:grid-cols-[11rem_minmax(0,1fr)] sm:items-baseline sm:gap-6 sm:p-6">
+          <div>
+            <h3 class="!m-0 !text-[16.5px] font-semibold">{item.role}</h3>
+            <p class="!mt-1 font-mono text-[12px] text-fg-subtle">{item.need}</p>
+          </div>
+          <p class="!m-0 text-[15px]">{item.text}</p>
+        </article>
+      ))
+    }
+  </div>
+
+  <p class="mt-6">
+    每个 bank 是一个用户、智能体或项目的“一颗大脑”，<strong>严格隔离</strong>，用户 A 的记忆不会出现在用户 B
+    的召回结果里。详见<a href="/concepts#记忆库">记忆库</a>。
+  </p>
+
+  <h2 id="更多模式">更多模式</h2>
+
+  <div class="plain-links mt-4 grid gap-3 sm:grid-cols-2">
+    {
+      [
+        { name: '示例库（Cookbook）', detail: '可直接照搬的完整场景实现', href: 'https://hindsight.vectorize.io/cookbook' },
+        { name: '最佳实践', detail: '召回预算、元数据设计与 bank 组织建议', href: 'https://hindsight.vectorize.io/best-practices' },
+        { name: 'RAG 与记忆对比', detail: '什么时候用 RAG，什么时候用 Hindsight', href: 'https://hindsight.vectorize.io/developer/rag-vs-hindsight' },
+        { name: '基准测试看板', detail: '各方案的准确率、延迟与成本', href: site.benchmarks },
+      ].map((link) => (
+        <a
+          href={link.href}
+          target="_blank"
+          rel="noreferrer noopener"
+          class="group flex items-start justify-between gap-3 rounded-lg border border-line bg-bg p-4 transition-colors duration-200 hover:bg-bg-elev"
+        >
+          <span>
+            <span class="block text-[15.5px] font-medium text-fg">{link.name}</span>
+            <span class="mt-1 block text-[14px] text-fg-muted">{link.detail}</span>
+          </span>
+          <Icon
+            name="tabler:arrow-up-right"
+            class="mt-0.5 size-4 shrink-0 text-fg-subtle transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+            aria-hidden="true"
+          />
+        </a>
+      ))
+    }
+  </div>
+</DocLayout>

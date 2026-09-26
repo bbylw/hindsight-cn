@@ -1,0 +1,221 @@
+---
+import { Icon } from 'astro-icon/components';
+import DocLayout from '../layouts/DocLayout.astro';
+import Callout from '../components/Callout.astro';
+import { deploymentItems, site } from '../data/site';
+
+const toc = [
+  { label: '能力总览', href: '#能力总览' },
+  { label: '存储', href: '#存储' },
+  { label: '配置', href: '#配置' },
+  { label: '监控', href: '#监控' },
+  { label: '运维', href: '#运维' },
+  { label: '事件', href: '#事件' },
+  { label: '扩展性', href: '#扩展性' },
+  { label: '托管', href: '#托管' },
+] as const;
+const doc = (path: string) => `https://hindsight.vectorize.io/${path}`;
+
+const configLayers = [
+  { layer: '全局', scope: '环境变量', detail: 'HINDSIGHT_* 环境变量，为所有租户与 bank 提供默认值。' },
+  { layer: '租户', scope: '每租户', detail: '按租户覆盖全局配置，例如不同的 LLM 提供商或存储位置。' },
+  { layer: 'bank', scope: '每个记忆库', detail: 'bank 级配置，启用记忆防御、倾向特质等策略。' },
+] as const;
+
+const metricFamilies = [
+  { name: 'LLM 调用', detail: '调用次数、失败率、模型分布' },
+  { name: 'Token 用量', detail: '输入 / 输出 token 累计与增速' },
+  { name: '延迟', detail: 'retain、recall、reflect 的分位延迟' },
+  { name: '记忆健康度', detail: 'bank 规模、观察数量与整合状态' },
+] as const;
+---
+
+<DocLayout
+  title="生产环境部署"
+  eyebrow="Deployment"
+  toc={toc}
+  lead="从单机 Docker 到多租户集群：存储、配置、监控、运维、事件与扩展点都有对应能力；也可以完全托管，把这些交给 Hindsight Cloud。"
+>
+  <Fragment slot="header">
+    <div class="mt-8 flex flex-wrap gap-3 text-[13.5px] xl:hidden">
+      {
+        deploymentItems.map((item) => (
+          <a
+            href={item.href}
+            target="_blank"
+            rel="noreferrer noopener"
+            class="inline-flex items-center gap-1.5 rounded-md border border-line px-3 py-1.5 text-fg-muted transition-colors duration-200 hover:border-line-strong hover:text-fg"
+          >
+            <Icon name={item.icon} class="size-3.5" aria-hidden="true" />
+            {item.name}
+          </a>
+        ))
+      }
+    </div>
+  </Fragment>
+
+  <h2 id="能力总览">能力总览</h2>
+
+  <div
+    class="plain-links mt-6 grid gap-px overflow-hidden rounded-lg border border-line bg-line sm:grid-cols-2 lg:grid-cols-3"
+  >
+    {
+      deploymentItems.slice(0, 6).map((item) => (
+        <a
+          href={item.href}
+          target="_blank"
+          rel="noreferrer noopener"
+          class="group bg-bg p-5 transition-colors duration-200 hover:bg-bg-elev"
+        >
+          <span class="flex items-center gap-2.5 text-[16px] font-medium text-fg">
+            <Icon name={item.icon} class="size-4.5 text-accent" aria-hidden="true" />
+            {item.name}
+            <Icon
+              name="tabler:arrow-up-right"
+              class="size-3.5 text-fg-subtle transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+              aria-hidden="true"
+            />
+          </span>
+          <p class="!mt-2.5 !max-w-none text-[14px]">{item.detail}</p>
+        </a>
+      ))
+    }
+  </div>
+
+  <h2 id="存储">存储</h2>
+
+  <p>
+    Hindsight 需要一个支持向量检索的关系型数据库。两种后端功能完全对齐，选哪个取决于你的运维现状。
+  </p>
+
+  <div class="mt-6 grid gap-4 sm:grid-cols-2">
+    <article class="rounded-lg border border-line bg-bg p-5">
+      <h3 class="!m-0 !text-[17px]">PostgreSQL + pgvector</h3>
+      <p class="!mt-2.5 text-[14.5px]">
+        默认路径。单机用内置的 pg0 嵌入式数据库即可，多机部署时指向外部 PostgreSQL 实例，或用官方 Helm
+        chart 一并托管。
+      </p>
+      <p class="!mt-3 text-[14px]">
+        <a href={doc('developer/storage')} target="_blank" rel="noreferrer noopener">存储文档</a>
+      </p>
+    </article>
+    <article class="rounded-lg border border-line bg-bg p-5">
+      <h3 class="!m-0 !text-[17px]">Oracle AI Database 23ai</h3>
+      <p class="!mt-2.5 text-[14.5px]">
+        面向企业部署，功能与 PostgreSQL 后端完全对齐。如果你的组织已经把数据层统一到 Oracle，这是
+        免去第二套数据库的理由。
+      </p>
+      <p class="!mt-3 text-[14px]">
+        <a href={doc('developer/storage')} target="_blank" rel="noreferrer noopener">存储文档</a>
+      </p>
+    </article>
+  </div>
+
+  <h2 id="配置">配置</h2>
+
+  <p>配置是层级式的，后一层覆盖前一层：</p>
+
+  <ol class="mt-6">
+    {
+      configLayers.map((item) => (
+        <li>
+          <strong>
+            {item.layer}
+            <span class="ml-2 font-mono text-[12.5px] font-normal text-fg-subtle">{item.scope}</span>
+          </strong>
+          {item.detail}
+        </li>
+      ))
+    }
+  </ol>
+
+  <p>
+    <a href={doc('developer/configuration')} target="_blank" rel="noreferrer noopener">配置文档</a>
+  </p>
+
+  <h2 id="监控">监控</h2>
+
+  <p>开箱提供面向 LLM 调用、token 与延迟的 Prometheus 指标与仪表盘。</p>
+
+  <div class="mt-6 grid gap-px overflow-hidden rounded-lg border border-line bg-line sm:grid-cols-2 lg:grid-cols-4">
+    {
+      metricFamilies.map((metric) => (
+        <div class="bg-bg p-5">
+          <p class="!m-0 font-mono text-[12.5px] text-accent">{metric.name}</p>
+          <p class="!mt-2 !max-w-none text-[14px]">{metric.detail}</p>
+        </div>
+      ))
+    }
+  </div>
+
+  <p class="mt-6">
+    <a href={doc('developer/monitoring')} target="_blank" rel="noreferrer noopener">监控文档</a>
+  </p>
+
+  <h2 id="运维">运维</h2>
+
+  <p>管理 CLI 覆盖三类日常操作：数据库迁移、bank 修复、以及处理卡住的操作。</p>
+
+  <p>
+    <a href={doc('developer/admin-cli')} target="_blank" rel="noreferrer noopener">管理 CLI 文档</a>
+  </p>
+
+  <h2 id="事件">事件</h2>
+
+  <p>
+    Webhook 面向 retain、整合与刷新的生命周期事件，可以在记忆写入完成后触发下游流程（同步到数据仓库、通知业务系统、
+    触发再评估）。
+  </p>
+
+  <p>
+    <a href={doc('developer/api/webhooks')} target="_blank" rel="noreferrer noopener">Webhook 文档</a>
+  </p>
+
+  <h2 id="扩展性">扩展性</h2>
+
+  <p>租户、鉴权与存储都留有扩展点，可按自己的组织结构与安全要求接入。</p>
+
+  <p>
+    <a href={doc('developer/extensions')} target="_blank" rel="noreferrer noopener">扩展文档</a>
+  </p>
+
+  <h2 id="托管">托管</h2>
+
+  <p>
+    不想自己运维的话，用{' '}
+    <a href={site.pricing} target="_blank" rel="noreferrer noopener">Hindsight Cloud</a> 省去这一切：托管、按量计费、99.9%
+    可用性 SLA，基础设施自动扩缩，附带仪表盘、备份与团队协作。
+  </p>
+
+  <div
+    class="plain-links mt-6 flex flex-col gap-5 rounded-lg border border-line bg-bg p-6 sm:flex-row sm:items-center sm:justify-between"
+  >
+    <div class="max-w-[54ch]">
+      <p class="!m-0 flex items-center gap-2.5 text-[16px] font-medium text-fg">
+        <Icon name="tabler:cloud-check" class="size-4.5 text-accent" aria-hidden="true" />
+        Hindsight Cloud
+      </p>
+      <p class="!mt-2 text-[14px]">
+        按用量计费，起步赠送免费额度，无固定月费或席位费。把任意客户端指向托管端点即可。
+      </p>
+    </div>
+    <a
+      href={site.pricing}
+      target="_blank"
+      rel="noreferrer noopener"
+      class="inline-flex shrink-0 items-center gap-2 self-start rounded-md border border-line px-4 py-2.5 text-[14.5px] text-fg transition-colors duration-200 hover:border-line-strong active:translate-y-px sm:self-auto"
+    >
+      对比方案
+      <Icon name="tabler:arrow-right" class="size-4" aria-hidden="true" />
+    </a>
+  </div>
+
+  <div class="mt-6">
+    <Callout variant="tip" title="Windows 与离线环境">
+      <p>
+        Windows、Intel Mac 以及离线（air-gapped）环境均有对应安装方式，详见官方
+        <a href={doc('developer/installation')} target="_blank" rel="noreferrer noopener">安装指南</a>；云端方案则完全不需要本地环境。
+      </p>
+    </Callout>
+  </div>
+</DocLayout>

@@ -1,0 +1,41 @@
+---
+import { Icon } from 'astro-icon/components';
+
+interface Props {
+  variant?: 'note' | 'tip' | 'warn';
+  title?: string;
+  class?: string;
+}
+
+const { variant = 'note', title, class: className = '' } = Astro.props;
+
+const config = {
+  note: { icon: 'tabler:info-circle', label: '说明' },
+  tip: { icon: 'tabler:bulb', label: '提示' },
+  warn: { icon: 'tabler:alert-triangle', label: '注意' },
+} as const;
+
+const { icon, label } = config[variant];
+---
+
+<aside
+  class:list={[
+    'flex gap-3.5 rounded-lg border border-line bg-bg-elev p-4 sm:p-5',
+    variant === 'warn' && 'border-cat-4/40',
+    className,
+  ]}
+>
+  <Icon name={icon} class="mt-0.5 size-[18px] shrink-0 text-accent" aria-hidden="true" />
+  <div class="min-w-0 text-[15px] text-fg-muted">
+    {
+      title && (
+        <p class="mb-1 font-medium text-fg">
+          {title ?? label}
+        </p>
+      )
+    }
+    <div class="[&>p+p]:mt-3 [&>ul]:mt-2 [&>ol]:mt-2">
+      <slot />
+    </div>
+  </div>
+</aside>

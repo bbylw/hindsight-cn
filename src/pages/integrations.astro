@@ -1,0 +1,193 @@
+---
+import { Icon } from 'astro-icon/components';
+import DocLayout from '../layouts/DocLayout.astro';
+import CodePanel from '../components/CodePanel.astro';
+import Callout from '../components/Callout.astro';
+import { integrationCategories } from '../data/site';
+import { snippets } from '../data/snippets';
+
+const toc = [
+  { label: 'LLM 包装器', href: '#llm-包装器' },
+  { label: '集成清单', href: '#集成清单' },
+  { label: '编程智能体', href: '#编程智能体' },
+  { label: 'MCP 服务', href: '#mcp' },
+] as const;
+const codingAgents = [
+  'Claude Code',
+  'Codex CLI',
+  'Cursor CLI',
+  'GitHub Copilot CLI',
+  'opencode',
+  'Kilo CLI',
+  'Cline CLI',
+  'Antigravity CLI',
+  'Devin CLI',
+  'pi',
+  'Prime Agent',
+  'Grok Build',
+  'DeepSeek Harness',
+];
+---
+
+<DocLayout
+  title="接入你的 Agent"
+  eyebrow="Integrations"
+  toc={toc}
+  lead="60+ 项集成，多数无需改代码：LLM 包装器两行接入、编程智能体一条命令装好、框架与无代码平台各有现成适配，每个服务端还自带 MCP 端点。"
+>
+  <Fragment slot="header">
+    <div class="mt-8 flex flex-wrap gap-3 text-[13.5px] xl:hidden">
+      <a
+        href="https://hindsight.vectorize.io/integrations"
+        target="_blank"
+        rel="noreferrer noopener"
+        class="inline-flex items-center gap-2 rounded-md border border-line px-3 py-1.5 text-fg-muted transition-colors duration-200 hover:border-line-strong hover:text-fg"
+      >
+        <Icon name="tabler:external-link" class="size-3.5" aria-hidden="true" />
+        浏览全部集成
+      </a>
+    </div>
+  </Fragment>
+
+  <h2 id="llm-包装器">LLM 包装器（两行代码）</h2>
+
+  <p>
+    为已有 Agent 添加记忆最简单的方式就是 LLM 包装器。把你的 LLM 客户端换成包装后的版本即可。此后每次调用都会自动存储与检索记忆，无需改动其他代码。
+  </p>
+
+  <div class="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:items-start">
+    <div>
+      <p>
+        <code>wrap_openai()</code> 对 OpenAI SDK 做这件事，<code>wrap_anthropic()</code> 对 Anthropic SDK 做同样的事。每一项设置（bank、召回预算、事实类型、用 reflect
+        替代 recall）都可通过 <code>hindsight_*</code> 关键字参数在每次调用时单独覆盖。
+      </p>
+      <p>
+        底层基于 LiteLLM，因此同一套集成可覆盖 <strong>100+ 模型</strong>。默认指向 Hindsight
+        Cloud；传入 <code>hindsight_api_url</code> 可改用自托管服务端。
+      </p>
+      <div class="mt-5">
+        <CodePanel code="pip install hindsight-litellm" lang="bash" title="安装" />
+      </div>
+      <p class="!mt-5 text-[14.5px]">
+        如果你需要显式控制记忆<strong>何时</strong>被存储与召回，请直接使用{' '}
+        <a href="/quickstart#客户端">SDK 或 REST API</a>。
+      </p>
+    </div>
+
+    <CodePanel code={snippets.litellmWrapper} lang="python" title="wrap_openai" />
+  </div>
+
+  <p>
+    <a
+      href="https://hindsight.vectorize.io/sdks/integrations/litellm"
+      target="_blank"
+      rel="noreferrer noopener">LiteLLM 集成文档</a>
+  </p>
+
+  <h2 id="集成清单">集成</h2>
+
+  <p>四个主要类别如下；完整清单（含更多框架与工具）见官方集成页。</p>
+
+  <div class="plain-links mt-8 grid gap-4 sm:grid-cols-2">
+    {
+      integrationCategories.map((category) => (
+        <section class="rounded-lg border border-line bg-bg p-5">
+          <h3 class="!m-0 flex items-center justify-between gap-3 !text-[16.5px]">
+            <span class="flex items-center gap-2.5">
+              <Icon name={category.icon} class="size-4.5 text-accent" aria-hidden="true" />
+              {category.name}
+            </span>
+            <span class="font-mono text-[12.5px] font-normal text-fg-subtle">
+              {category.items.length}
+            </span>
+          </h3>
+          <ul class="!mt-4 flex flex-wrap gap-1.5">
+            {category.items.map((item) => (
+              <li class="!mt-0 !pl-0 before:hidden">
+                <a
+                  href={item.href}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  class="inline-flex items-center gap-1 rounded-full border border-line px-2.5 py-1 text-[13px] !leading-normal text-fg-muted no-underline transition-colors duration-200 hover:border-accent/50 hover:text-fg"
+                >
+                  {item.name}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))
+    }
+  </div>
+
+  <p class="mt-6">
+    <a href="https://hindsight.vectorize.io/integrations" target="_blank" rel="noreferrer noopener">
+      浏览全部 60+ 项集成
+    </a>
+  </p>
+
+  <h2 id="编程智能体">编程智能体</h2>
+
+  <p>
+    一个包即可为 CLI 编程智能体赋予长期项目记忆：基于 git 历史与过往会话自动构建的「每仓库一个
+    bank」，在智能体开始工作时注入其中，并附带涵盖架构、规范与进行中工作的精选知识页。
+  </p>
+
+  <div class="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:items-start">
+    <CodePanel code={snippets.codingAgents} lang="bash" title="一键安装" />
+
+    <div>
+      <p class="!mt-0 text-[14px] text-fg-subtle">支持以下 CLI 智能体，数据摄取是自动的，无需任何初始化命令：</p>
+      <ul
+        class="mt-4 flex snap-x snap-mandatory gap-2 overflow-x-auto pb-2 [scrollbar-width:thin]"
+      >
+        {
+          codingAgents.map((name) => (
+            <li class="!mt-0 shrink-0 snap-start !pl-0 before:hidden">
+              <span class="inline-flex items-center rounded-full border border-line px-3 py-1.5 text-[13px] whitespace-nowrap text-fg-muted">
+                {name}
+              </span>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="!mt-5 text-[14.5px]">
+        <a
+          href="https://hindsight.vectorize.io/sdks/integrations/coding-agents"
+          target="_blank"
+          rel="noreferrer noopener">编程智能体集成文档</a>
+      </p>
+    </div>
+  </div>
+
+  <h2 id="mcp">MCP 服务</h2>
+
+  <p>
+    每个服务端都内置一个{' '}
+    <a href="https://modelcontextprotocol.io/" target="_blank" rel="noreferrer noopener">Model Context Protocol</a>
+    端点，每个 bank 一个，默认开启。将任意 MCP 客户端指向它，即可把 retain、recall、reflect 作为工具暴露出来。
+  </p>
+
+  <div class="mt-6 grid gap-px overflow-hidden rounded-lg border border-line bg-line sm:grid-cols-[1.4fr_1fr]">
+    <div class="bg-bg p-5">
+      <p class="!m-0 font-mono text-[13.5px] text-fg">{snippets.mcp}</p>
+    </div>
+    <div class="flex items-center justify-between gap-4 bg-bg-elev p-5">
+      <p class="!m-0 text-[14px]">
+        <a
+          href="https://hindsight.vectorize.io/developer/mcp-server"
+          target="_blank"
+          rel="noreferrer noopener">MCP 服务文档</a>
+      </p>
+      <Icon name="tabler:arrow-up-right" class="size-4 shrink-0 text-fg-subtle" aria-hidden="true" />
+    </div>
+  </div>
+
+  <div class="mt-8">
+    <Callout variant="tip" title="不确定选哪种？">
+      <p>
+        想要零改动就用 LLM 包装器；想要显式控制就用 <a href="/quickstart#客户端">SDK</a>；智能体在外部运行时用 MCP；编程智能体用上面的一键安装包。
+      </p>
+    </Callout>
+  </div>
+</DocLayout>

@@ -1,0 +1,237 @@
+---
+/**
+ * 记忆架构图：三个核心操作与四类记忆的对应关系。
+ * 属于内容图示（不是装饰），因此用 SVG 保证连线与文案在任何宽度下对齐。
+ */
+const ops = [
+  { cn: '保留', en: 'RETAIN', note: '存入信息', color: 'var(--color-cat-2)' },
+  { cn: '召回', en: 'RECALL', note: '检索记忆', color: 'var(--color-cat-1)' },
+  { cn: '反思', en: 'REFLECT', note: '生成洞见', color: 'var(--color-cat-4)' },
+];
+
+const types = [
+  { cn: '世界事实', en: 'FACTS', color: 'var(--color-cat-1)' },
+  { cn: '经历', en: 'EXPERIENCE', color: 'var(--color-cat-2)' },
+  { cn: '观察', en: 'INSIGHTS', color: 'var(--color-cat-3)' },
+  { cn: '心智模型', en: 'MODELS', color: 'var(--color-cat-4)' },
+];
+
+const pillW = 210;
+const pillH = 60;
+const pillGap = 22;
+const rowH = 44;
+
+const coreX = 384;
+const coreW = 238;
+const headerH = 46;
+const corePadX = 16;
+const corePadY = 16;
+const coreH = headerH + corePadY + types.length * rowH + (types.length - 1) * pillGap + corePadY;
+
+const opTop = 58;
+const opY = (i: number) => opTop + i * (pillH + pillGap);
+const typeY = (i: number) => headerH + corePadY + i * (rowH + pillGap);
+
+const viewH = coreH + 4;
+const x1 = pillW + 6;
+const x2 = coreX - 18;
+---
+
+<svg
+  viewBox={`0 0 ${coreX + coreW} ${viewH}`}
+  class="w-full"
+  role="img"
+  aria-labelledby="memory-graph-title memory-graph-desc"
+>
+  <title id="memory-graph-title">Hindsight 记忆架构</title>
+  <desc id="memory-graph-desc">
+    智能体通过保留、召回、反思三个操作，与世界事实、经历、观察、心智模型四类记忆交互。四类记忆共同构成一个记忆网络，
+    每个 bank 之间严格隔离。
+  </desc>
+
+  <defs>
+    <radialGradient id="core-halo" cx="50%" cy="46%" r="58%">
+      <stop offset="0%" stop-color="var(--color-accent)" stop-opacity="0.11" />
+      <stop offset="72%" stop-color="var(--color-accent)" stop-opacity="0.02" />
+      <stop offset="100%" stop-color="var(--color-accent)" stop-opacity="0" />
+    </radialGradient>
+    <marker
+      id="mg-arrow"
+      viewBox="0 0 10 10"
+      refX="8.5"
+      refY="5"
+      markerWidth="5.5"
+      markerHeight="5.5"
+      orient="auto"
+    >
+      <path d="M1 1.4 L9 5 L1 8.6 Z" fill="currentColor" />
+    </marker>
+  </defs>
+
+  <ellipse
+    cx={coreX + coreW / 2}
+    cy={coreH / 2}
+    rx={coreW * 0.66}
+    ry={coreH * 0.5}
+    fill="url(#core-halo)"
+  />
+
+  <!-- 记忆网络 -->
+  <rect
+    x={coreX}
+    y="0"
+    width={coreW}
+    height={coreH}
+    rx="14"
+    fill="var(--color-bg-elev)"
+    stroke="var(--color-line-strong)"
+    stroke-width="1"
+  />
+  <text
+    x={coreX + corePadX}
+    y="30"
+    fill="var(--color-fg)"
+    font-size="16.5"
+    font-weight="600"
+    font-family="var(--font-sans)">记忆网络</text>
+  <text
+    x={coreX + coreW - corePadX}
+    y="29"
+    text-anchor="end"
+    fill="var(--color-fg-subtle)"
+    font-size="11"
+    letter-spacing="1.4"
+    font-family="var(--font-mono)">BANK</text>
+  <line
+    x1={coreX + corePadX}
+    y1={headerH - 6}
+    x2={coreX + coreW - corePadX}
+    y2={headerH - 6}
+    stroke="var(--color-line)"
+    stroke-width="1"
+  />
+
+  {
+    types.map((type, i) => {
+      const y = typeY(i);
+      return (
+        <g>
+          <rect
+            x={coreX + corePadX}
+            y={y}
+            width={coreW - corePadX * 2}
+            height={rowH}
+            rx="8"
+            fill="var(--color-bg)"
+            stroke="var(--color-line)"
+            stroke-width="1"
+          />
+          <rect
+            x={coreX + corePadX}
+            y={y + 9}
+            width="3"
+            height={rowH - 18}
+            rx="1.5"
+            fill={type.color}
+          />
+          <text
+            x={coreX + corePadX + 16}
+            y={y + 28}
+            fill="var(--color-fg)"
+            font-size="16"
+            font-family="var(--font-sans)">{type.cn}</text>
+          <text
+            x={coreX + coreW - corePadX - 12}
+            y={y + 27}
+            text-anchor="end"
+            fill="var(--color-fg-subtle)"
+            font-size="10"
+            letter-spacing="1.1"
+            font-family="var(--font-mono)">{type.en}</text>
+        </g>
+      );
+    })
+  }
+
+  <!-- 智能体侧标签 -->
+  <text
+    x="0"
+    y="38"
+    fill="var(--color-fg-subtle)"
+    font-size="11.5"
+    letter-spacing="1.6"
+    font-family="var(--font-mono)">AGENT</text>
+
+  <!-- 三个操作 -->
+  {
+    ops.map((op, i) => {
+      const y = opY(i);
+      return (
+        <g>
+          <rect
+            x="0"
+            y={y}
+            width={pillW}
+            height={pillH}
+            rx="12"
+            fill="var(--color-bg-elev)"
+            stroke="var(--color-line-strong)"
+            stroke-width="1"
+          />
+          <rect x="0" y={y + 13} width="3" height={pillH - 26} rx="1.5" fill={op.color} />
+          <text
+            x="20"
+            y={y + 27}
+            fill="var(--color-fg)"
+            font-size="17"
+            font-weight="600"
+            font-family="var(--font-sans)">{op.cn}</text>
+          <text
+            x={pillW - 18}
+            y={y + 26}
+            text-anchor="end"
+            fill="var(--color-fg-subtle)"
+            font-size="10.5"
+            letter-spacing="1.2"
+            font-family="var(--font-mono)">{op.en}</text>
+          <text
+            x="20"
+            y={y + 47}
+            fill="var(--color-fg-muted)"
+            font-size="13.5"
+            font-family="var(--font-sans)">{op.note}</text>
+        </g>
+      );
+    })
+  }
+
+  <!-- 操作 → 记忆网络 -->
+  {
+    ops.map((op, i) => {
+      const y = opY(i) + pillH / 2;
+      const targetY = typeY(i) + rowH / 2;
+      const midX = (x1 + x2) / 2;
+      const d = `M ${x1} ${y} C ${midX} ${y}, ${midX} ${targetY}, ${x2} ${targetY}`;
+      return (
+        <g style={`color:${op.color}`}>
+          <path
+            d={d}
+            fill="none"
+            stroke="var(--color-line)"
+            stroke-width="1.4"
+            stroke-linecap="round"
+          />
+          <path
+            d={d}
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.4"
+            stroke-linecap="round"
+            class="flow-line"
+            marker-end="url(#mg-arrow)"
+          />
+        </g>
+      );
+    })
+  }
+</svg>

@@ -1,0 +1,623 @@
+---
+import { Icon } from 'astro-icon/components';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CodePanel from '../components/CodePanel.astro';
+import InstallTabs from '../components/InstallTabs.astro';
+import MemoryGraph from '../components/MemoryGraph.astro';
+import BenchmarkChart from '../components/BenchmarkChart.astro';
+import {
+  deploymentItems,
+  integrationCategories,
+  memoryTypes,
+  operations,
+  site,
+} from '../data/site';
+import { snippets } from '../data/snippets';
+
+const facts = [
+  { value: '94.6%', label: 'LongMemEval 综合得分', href: site.benchmarks },
+  { value: '60+', label: '项集成，多数无需改代码', href: '/integrations' },
+  { value: '25+', label: '家 LLM 提供商', href: 'https://hindsight.vectorize.io/developer/models' },
+  { value: '4', label: '类仿生记忆结构', href: '/concepts' },
+] as const;
+
+const integrationNames = integrationCategories.flatMap((category) =>
+  category.items.map((item) => item.name),
+);
+
+const perUserSteps = [
+  { term: '摄入', detail: '用户输入与工具调用经 retain 进入 Hindsight' },
+  { term: '隔离', detail: '自定义元数据限定记忆归属的用户' },
+  { term: '过滤', detail: '召回时按需过滤原始记忆与心智模型' },
+] as const;
+
+const reflectCases = [
+  { role: 'AI 项目经理', text: '反思项目中需要规避的风险。' },
+  { role: '销售智能体', text: '反思为何某些外联消息有回应，另一些没有。' },
+  { role: '支持智能体', text: '反思客户现有产品文档没能解答的问题。' },
+] as const;
+---
+
+<BaseLayout>
+  <!-- 1 · Hero -->
+  <section class="relative overflow-hidden">
+    <div class="brand-hero pointer-events-none absolute inset-0" aria-hidden="true"></div>
+    <div
+      class="grid-field pointer-events-none absolute inset-0 opacity-70 [mask-image:radial-gradient(78%_62%_at_66%_0%,black,transparent)]"
+      aria-hidden="true"
+    >
+    </div>
+
+    <div class="shell pt-16 pb-16 lg:pt-20 lg:pb-24">
+      <div
+        class="grid grid-cols-1 items-center gap-14 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] lg:gap-16"
+      >
+        <div>
+          <p class="font-mono text-[11.5px] tracking-[0.2em] text-fg-subtle uppercase">
+            Agent Memory That Learns
+          </p>
+
+          <h1
+            class="mt-7 text-[38px] leading-[1.16] font-semibold sm:text-[52px] lg:text-[60px]"
+          >
+            <span class="block">让智能体<span class="text-accent">学会</span></span>
+            <span class="block">而不只是记住</span>
+          </h1>
+
+          <p class="mt-7 max-w-[30em] text-[16.5px] leading-[1.9] text-fg-muted lg:text-[17.5px]">
+            Hindsight 把每次对话提炼为事实、经历、观察与心智模型，让智能体随时间不断精炼记忆，而不是回放历史。
+          </p>
+
+          <div class="mt-9 flex flex-wrap items-center gap-3">
+            <a
+              href="/quickstart"
+              class="group inline-flex items-center gap-2 rounded-md bg-accent px-5 py-3 text-[15px] font-medium text-accent-fg transition-[transform,background-color] duration-200 hover:bg-accent-strong active:translate-y-px"
+            >
+              快速开始
+              <Icon
+                name="tabler:arrow-right"
+                class="size-4 transition-transform duration-200 group-hover:translate-x-0.5"
+                aria-hidden="true"
+              />
+            </a>
+            <a
+              href={site.github}
+              target="_blank"
+              rel="noreferrer noopener"
+              class="inline-flex items-center gap-2 rounded-md border border-line px-5 py-3 text-[15px] text-fg transition-colors duration-200 hover:border-line-strong active:translate-y-px"
+            >
+              <Icon name="tabler:brand-github" class="size-4" aria-hidden="true" />
+              源码仓库
+            </a>
+          </div>
+        </div>
+
+        <div
+          class="surface spotlight relative overflow-hidden rounded-xl border border-line p-4 sm:p-6"
+          data-spotlight
+        >
+          <MemoryGraph />
+        </div>
+      </div>
+    </div>
+
+    <div class="border-y border-line bg-bg-elev/60">
+      <dl class="shell grid grid-cols-2 lg:grid-cols-4">
+        {
+          facts.map((fact) => (
+            <a
+              href={fact.href}
+              target={fact.href.startsWith('http') ? '_blank' : undefined}
+              rel={fact.href.startsWith('http') ? 'noreferrer noopener' : undefined}
+              class="group border-line px-1 py-7 transition-colors duration-200 hover:bg-bg-elev sm:px-5 lg:border-l lg:first:border-l-0"
+            >
+              <dt class="sr-only">{fact.label}</dt>
+              <dd>
+                <span class="nums block text-[28px] leading-none font-semibold tracking-[-0.02em] text-fg sm:text-[32px]">
+                  {fact.value}
+                </span>
+                <span class="mt-2.5 block text-[13.5px] text-fg-subtle transition-colors duration-200 group-hover:text-fg-muted">
+                  {fact.label}
+                </span>
+              </dd>
+            </a>
+          ))
+        }
+      </dl>
+    </div>
+  </section>
+
+  <!-- 2 · 基准成绩 -->
+  <section class="shell py-20 lg:py-28" data-reveal>
+    <div class="grid grid-cols-1 gap-12 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-20">
+      <div>
+        <p class="font-mono text-[11px] tracking-[0.2em] text-accent uppercase">基准成绩</p>
+        <h2 class="mt-5 text-[28px] leading-[1.3] font-semibold sm:text-[34px] lg:text-[38px]">
+          被测过的最准确方案
+        </h2>
+        <p class="mt-5 max-w-[30em] text-[16px] leading-[1.9] text-fg-muted">
+          LongMemEval 广泛用于评估对话式 AI 的记忆表现。Hindsight 在综合得分上领先 Zep、SuperMemory
+          等方案，也高于直接使用 GPT-4o 的基线。
+        </p>
+        <div class="mt-8 flex flex-wrap gap-3 text-[14px]">
+          <a
+            href={site.benchmarks}
+            target="_blank"
+            rel="noreferrer noopener"
+            class="sweep inline-flex items-center gap-2 rounded-md border border-line px-4 py-2.5 text-fg-muted transition-colors duration-200 hover:border-line-strong hover:text-fg"
+          >
+            <Icon name="tabler:chart-dots-3" class="size-4" aria-hidden="true" />
+            实时看板
+          </a>
+          <a
+            href={site.paper}
+            target="_blank"
+            rel="noreferrer noopener"
+            class="sweep inline-flex items-center gap-2 rounded-md border border-line px-4 py-2.5 text-fg-muted transition-colors duration-200 hover:border-line-strong hover:text-fg"
+          >
+            <Icon name="tabler:file-text" class="size-4" aria-hidden="true" />
+            论文
+          </a>
+        </div>
+        <p class="mt-8 border-t border-line pt-5 text-[13.5px] leading-relaxed text-fg-subtle">
+          数据已由弗吉尼亚理工 Sanghani 人工智能与数据分析中心及《华盛顿邮报》的研究合作方独立复现，其余分数由各家厂商自行上报。
+        </p>
+      </div>
+
+      <div class="lg:pt-6">
+        <p class="font-mono text-[11.5px] tracking-[0.14em] text-fg-subtle uppercase">
+          LongMemEval / Overall Score
+        </p>
+        <div class="mt-9">
+          <BenchmarkChart />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 · 三个核心操作 -->
+  <section class="border-y border-line bg-bg-sunken py-20 lg:py-28" data-reveal>
+    <div class="shell">
+      <div class="max-w-[46em]">
+        <h2 class="text-[28px] leading-[1.3] font-semibold sm:text-[34px] lg:text-[38px]">
+          记忆如何进出
+        </h2>
+        <p class="mt-5 text-[16px] leading-[1.9] text-fg-muted">
+          记忆存放在 bank 中。新记忆加入时会被推入「世界事实」或「经历」通道之一，再以实体、关系、时间序列的组合形式表示，并辅以稀疏与稠密向量表征，以便后续召回。
+        </p>
+      </div>
+
+      <div class="mt-12 grid gap-4 lg:grid-cols-12">
+        {
+          operations.map((op) => (
+            <article
+              class:list={[
+                'surface relative overflow-hidden rounded-lg border border-line p-6 sm:p-7',
+                op.key === 'retain' ? 'lg:col-span-5' : op.key === 'recall' ? 'lg:col-span-7' : 'lg:col-span-12',
+              ]}
+            >
+              <span
+                class="absolute inset-y-0 left-0 w-[2px]"
+                style={`background:${op.colorVar}`}
+                aria-hidden="true"
+              />
+              <div class="flex items-center gap-3">
+                <span
+                  class="font-mono text-[12px] tracking-[0.1em] uppercase"
+                  style={`color:${op.colorVar}`}
+                >
+                  {op.name}
+                </span>
+                <span class="rounded-xs border border-line px-2 py-0.5 text-[12px] text-fg-subtle">
+                  {op.verb}
+                </span>
+              </div>
+              <h3 class="mt-4 text-[19px] font-semibold sm:text-[21px]">{op.title}</h3>
+              <p class="mt-3 max-w-[54ch] text-[15px] leading-[1.9] text-fg-muted">{op.summary}</p>
+
+              {op.key === 'retain' && (
+                <div class="mt-6">
+                  <CodePanel code={snippets.retain} lang="python" title="retain" />
+                </div>
+              )}
+
+              {op.strategies && (
+                <div class="mt-6 rounded-lg border border-line bg-bg p-4 sm:p-5">
+                  <p class="font-mono text-[10.5px] tracking-[0.16em] text-fg-subtle uppercase">
+                    并行检索
+                  </p>
+                  <ul class="mt-4 grid gap-px overflow-hidden rounded-md border border-line bg-line sm:grid-cols-2">
+                    {op.strategies.map((strategy) => (
+                      <li class="bg-bg-elev px-4 py-3.5">
+                        <span class="text-[14.5px] font-medium text-fg">{strategy.name}</span>
+                        <span class="mt-1 block font-mono text-[12.5px] text-fg-subtle">
+                          {strategy.detail}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                  <p class="mt-4 flex flex-wrap items-center gap-x-2 gap-y-1 border-t border-line pt-4 text-[13.5px] text-fg-muted">
+                    <span>倒数排名融合</span>
+                    <Icon name="tabler:arrow-right" class="size-3.5 text-fg-subtle" aria-hidden="true" />
+                    <span>交叉编码器重排</span>
+                    <Icon name="tabler:arrow-right" class="size-3.5 text-fg-subtle" aria-hidden="true" />
+                    <span>按 token 上限裁剪</span>
+                  </p>
+                </div>
+              )}
+
+              {op.key === 'reflect' && (
+                <ul class="mt-7 grid gap-5 sm:grid-cols-3 sm:gap-8">
+                  {reflectCases.map((item) => (
+                    <li class="border-t border-line pt-4 text-[14.5px] leading-[1.85] text-fg-muted">
+                      <span class="mb-2 block text-[15px] font-medium text-fg">{item.role}</span>
+                      {item.text}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </article>
+          ))
+        }
+      </div>
+
+      <div class="mt-10 flex flex-wrap items-center gap-x-8 gap-y-3">
+        <a
+          href="/concepts"
+          class="sweep inline-flex items-center gap-2 text-[15px] text-accent"
+        >
+          深入理解核心概念
+          <Icon name="tabler:arrow-right" class="size-4" aria-hidden="true" />
+        </a>
+        <a
+          href="https://hindsight.vectorize.io/developer/retrieval"
+          target="_blank"
+          rel="noreferrer noopener"
+          class="sweep inline-flex items-center gap-2 text-[15px] text-fg-muted hover:text-fg"
+        >
+          Recall 检索文档
+          <Icon name="tabler:external-link" class="size-4" aria-hidden="true" />
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 · 记忆类型 -->
+  <section class="shell py-20 lg:py-28" data-reveal>
+    <div class="max-w-[34em]">
+      <h2 class="text-[28px] leading-[1.3] font-semibold sm:text-[34px] lg:text-[38px]">
+        四类记忆结构
+      </h2>
+      <p class="mt-5 text-[16px] leading-[1.9] text-fg-muted">
+        多数智能体记忆依赖基础的向量检索，偶尔用上知识图谱。Hindsight 采用更接近人类记忆工作方式的组织方式。
+      </p>
+    </div>
+
+    <div class="mt-12 grid gap-px overflow-hidden rounded-lg border border-line bg-line sm:grid-cols-2 lg:grid-cols-4">
+      {
+        memoryTypes.map((type) => (
+          <article class="group relative bg-bg p-6 pt-8">
+            <span
+              class="absolute inset-x-0 top-0 h-[2px] origin-left scale-x-0 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-x-100"
+              style={`background:${type.colorVar}`}
+              aria-hidden="true"
+            />
+            <p class="font-mono text-[10.5px] tracking-[0.16em] text-fg-subtle uppercase">
+              {type.en}
+            </p>
+            <h3 class="mt-3 text-[19px] font-semibold">{type.name}</h3>
+            <p class="mt-3 text-[14.5px] leading-[1.85] text-fg-muted">{type.summary}</p>
+            <p class="mt-6 border-l border-line-strong pl-3.5 text-[13.5px] leading-[1.7] text-fg-muted">
+              {type.example}
+            </p>
+          </article>
+        ))
+      }
+    </div>
+
+    <div class="mt-4 grid gap-4 lg:grid-cols-2">
+      <div class="surface rounded-lg border border-line p-6 sm:p-7">
+        <h3 class="flex items-center gap-2.5 text-[16.5px] font-semibold">
+          <Icon name="tabler:language" class="size-4.5 text-accent" aria-hidden="true" />
+          默认多语言
+        </h3>
+        <p class="mt-3 text-[14.5px] leading-[1.9] text-fg-muted">
+          输入语言会被检测并端到端保留。事实保持原始语言，实体保留原生文字，张伟仍然是张伟，而不是「Zhang Wei」。
+        </p>
+      </div>
+      <div class="surface rounded-lg border border-line p-6 sm:p-7">
+        <h3 class="flex items-center gap-2.5 text-[16.5px] font-semibold">
+          <Icon name="tabler:shield-lock" class="size-4.5 text-accent" aria-hidden="true" />
+          记忆防御
+        </h3>
+        <p class="mt-3 text-[14.5px] leading-[1.9] text-fg-muted">
+          可按 bank 启用的策略，针对 45 种模式扫描每次 retain 中的密钥与 PII，要么脱敏为
+          <code class="font-mono text-[13px] text-fg-subtle">[REDACTED:github_token]</code>，要么在存入前直接拦截。
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 · 快速开始 -->
+  <section class="border-y border-line bg-bg-sunken py-20 lg:py-28" data-reveal>
+    <div class="shell">
+      <p class="font-mono text-[11px] tracking-[0.2em] text-accent uppercase">快速开始</p>
+      <h2 class="mt-5 max-w-[18em] text-[28px] leading-[1.3] font-semibold sm:text-[34px] lg:text-[38px]">
+        把服务端跑起来
+      </h2>
+
+      <div class="mt-12">
+        <InstallTabs />
+      </div>
+
+      <div class="mt-16">
+        <h3 class="text-[21px] font-semibold sm:text-[24px]">连接客户端</h3>
+        <div class="mt-6">
+          <CodePanel code={snippets.installClients} lang="bash" title="安装客户端" />
+        </div>
+
+        <div class="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-[1.15fr_1fr]">
+          <CodePanel code={snippets.pythonClient} lang="python" title="Python" />
+          <CodePanel code={snippets.nodeClient} lang="javascript" title="Node.js / TypeScript" />
+        </div>
+
+        <p class="mt-6 text-[14.5px] text-fg-muted">
+          完整参考：<a class="sweep text-accent" href="https://hindsight.vectorize.io/sdks/python"
+            >Python</a
+          >、<a class="sweep text-accent" href="https://hindsight.vectorize.io/sdks/nodejs">Node.js</a
+          >、<a class="sweep text-accent" href="https://hindsight.vectorize.io/sdks/go">Go</a
+          >、<a class="sweep text-accent" href="https://hindsight.vectorize.io/sdks/cli">CLI</a
+          >、<a
+            class="sweep text-accent"
+            href="https://hindsight.vectorize.io/api-reference">REST API</a
+          >
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 · 接入你的 Agent -->
+  <section class="py-20 lg:py-28" data-reveal>
+    <div class="shell">
+      <div class="max-w-[34em]">
+        <h2 class="text-[28px] leading-[1.3] font-semibold sm:text-[34px] lg:text-[38px]">
+          不用重写，接入已有 Agent
+        </h2>
+        <p class="mt-5 text-[16px] leading-[1.9] text-fg-muted">
+          60+ 项集成，多数无需改代码。编程智能体一条命令装好，框架与无代码平台各有现成适配，每个服务端还自带 MCP
+          端点。
+        </p>
+      </div>
+    </div>
+
+    <div
+      class="mt-12 flex overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_6%,black_94%,transparent)]"
+    >
+      <ul class="flex shrink-0 gap-2.5 pr-2.5 motion-safe:animate-marquee">
+        {
+          [...integrationNames, ...integrationNames].map((name) => (
+            <li class="shrink-0 rounded-full border border-line bg-bg-elev px-3.5 py-1.5 text-[13.5px] whitespace-nowrap text-fg-muted">
+              {name}
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <div class="shell mt-12 grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:gap-14">
+      <div>
+        <p class="text-[15px] leading-[1.9] text-fg-muted">
+          最简单的方式是 LLM 包装器：把客户端换成包装后的版本，此后每次调用都会自动存储与检索记忆。底层基于
+          LiteLLM，同一套集成覆盖 100+ 模型。
+        </p>
+        <div class="mt-6">
+          <CodePanel code={snippets.litellmWrapper} lang="python" title="wrap_openai" />
+        </div>
+        <a
+          href="/integrations"
+          class="sweep mt-7 inline-flex items-center gap-2 text-[15px] text-accent"
+        >
+          查看全部集成
+          <Icon name="tabler:arrow-right" class="size-4" aria-hidden="true" />
+        </a>
+      </div>
+
+      <div>
+        <dl class="grid gap-px overflow-hidden rounded-lg border border-line bg-line sm:grid-cols-2">
+          {
+            integrationCategories.map((category) => (
+              <div class="bg-bg p-5">
+                <dt class="flex items-center gap-2.5 text-[15px] font-medium">
+                  <Icon name={category.icon} class="size-4.5 text-accent" aria-hidden="true" />
+                  {category.name}
+                </dt>
+                <dd class="mt-2.5 text-[13.5px] leading-relaxed text-fg-subtle">
+                  {category.items.length} 项，{category.items.slice(0, 3).map((item) => item.name).join('、')}
+                  等
+                </dd>
+              </div>
+            ))
+          }
+        </dl>
+
+        <div class="surface mt-4 rounded-lg border border-line p-5">
+          <h3 class="flex items-center gap-2.5 text-[15px] font-medium">
+            <Icon name="tabler:terminal-2" class="size-4.5 text-accent" aria-hidden="true" />
+            编程智能体
+          </h3>
+          <div class="mt-3.5">
+            <CodePanel code="npx @vectorize-io/hindsight-coding-agents install all" lang="bash" />
+          </div>
+          <p class="mt-3.5 text-[13.5px] text-fg-muted">
+            自动构建「每仓库一个 bank」，数据摄取无需任何初始化命令。
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 · 应用场景 -->
+  <section class="border-y border-line bg-bg-sunken py-20 lg:py-28" data-reveal>
+    <div class="shell">
+      <div class="max-w-[34em]">
+        <h2 class="text-[28px] leading-[1.3] font-semibold sm:text-[34px] lg:text-[38px]">
+          最理想的应用场景
+        </h2>
+        <p class="mt-5 text-[16px] leading-[1.9] text-fg-muted">
+          需要应对开放式任务、根据用户反馈改变行为、并学习执行复杂任务以逼近人类工作水平的 AI
+          员工。用于 n8n 之类的简单工作流也能跑通，只是有些大材小用。
+        </p>
+      </div>
+
+      <div class="mt-12 grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:items-start">
+        <div class="surface rounded-lg border border-line p-6 sm:p-8">
+          <h3 class="text-[21px] font-semibold sm:text-[24px]">按用户记忆与聊天历史</h3>
+          <p class="mt-4 text-[15px] leading-[1.9] text-fg-muted">
+            为聊天机器人做个性化：存储与召回单个用户相关的记忆，用自定义元数据隔离那些需要限定给特定用户的内容。
+          </p>
+          <dl class="mt-7 grid gap-px overflow-hidden rounded-md border border-line bg-line">
+            {
+              perUserSteps.map((step) => (
+                <div class="flex items-baseline gap-4 bg-bg px-4 py-3.5">
+                  <dt class="w-10 shrink-0 font-mono text-[12px] text-accent">{step.term}</dt>
+                  <dd class="text-[14px] text-fg-muted">{step.detail}</dd>
+                </div>
+              ))
+            }
+          </dl>
+        </div>
+
+        <figure class="overflow-hidden rounded-lg border border-line bg-bg p-2 sm:p-3">
+          <img
+            src="/img/per-user-memory-requirements.png"
+            width="1080"
+            height="388"
+            alt="按用户记忆的典型需求示意：按会话保留历史、在用户之间学习、定制用户体验。"
+            class="w-full rounded-md bg-white"
+            loading="lazy"
+            decoding="async"
+          />
+          <figcaption class="px-2 pt-3 pb-1 text-[13px] text-fg-subtle">
+            典型需求：偏好、事实、对话连续性、数据隔离。
+          </figcaption>
+        </figure>
+      </div>
+
+      <figure class="mx-auto mt-8 max-w-3xl overflow-hidden rounded-lg border border-line bg-bg p-2 sm:p-3">
+        <img
+          src="/img/per-user-memory-howto.png"
+          width="1080"
+          height="787"
+          alt="Hindsight 实现按用户记忆的分步指南：安装 SDK、准备元数据、用 retain 存入带元数据的记忆。"
+          class="w-full rounded-md bg-white"
+          loading="lazy"
+          decoding="async"
+        />
+        <figcaption class="px-2 pt-3 pb-1 text-[13px] text-fg-subtle">
+          实现路径：retain 附元数据，recall 与心智模型按需过滤。
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- 8 · 生产环境部署 -->
+  <section class="shell py-20 lg:py-28" data-reveal>
+    <div class="max-w-[40em]">
+      <h2 class="text-[28px] leading-[1.3] font-semibold sm:text-[34px] lg:text-[38px]">
+        为生产环境而建
+      </h2>
+      <p class="mt-5 text-[15.5px] leading-[1.9] text-fg-muted">
+        已在多家财富 500 强企业的生产环境中使用，被越来越多 AI 初创公司采用。
+      </p>
+    </div>
+
+    <div class="mt-12 grid gap-px overflow-hidden rounded-lg border border-line bg-line sm:grid-cols-2 lg:grid-cols-3">
+      {
+        deploymentItems.slice(0, 6).map((item) => (
+          <a
+            href={item.href}
+            target={item.href.startsWith('http') ? '_blank' : undefined}
+            rel={item.href.startsWith('http') ? 'noreferrer noopener' : undefined}
+            data-spotlight
+            class="group relative bg-bg p-6 transition-colors duration-200 hover:bg-bg-elev"
+          >
+            <span class="flex items-center gap-2.5 text-[16px] font-medium text-fg">
+              <Icon name={item.icon} class="size-4.5 text-accent" aria-hidden="true" />
+              {item.name}
+              <Icon
+                name="tabler:arrow-up-right"
+                class="size-3.5 text-fg-subtle transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                aria-hidden="true"
+              />
+            </span>
+            <p class="mt-2.5 text-[14px] leading-[1.85] text-fg-muted">{item.detail}</p>
+          </a>
+        ))
+      }
+
+      <a
+        href={site.pricing}
+        target="_blank"
+        rel="noreferrer noopener"
+        class="group relative flex flex-col justify-between gap-6 bg-bg p-6 transition-[filter] duration-200 hover:brightness-110 sm:col-span-2 lg:col-span-3 lg:flex-row lg:items-center"
+        style="background-image:linear-gradient(100deg,var(--color-accent-wash),transparent 62%)"
+      >
+        <div>
+          <h3 class="text-[19px] font-semibold">托管版 Hindsight Cloud</h3>
+          <p class="mt-2 max-w-[62ch] text-[14.5px] leading-[1.9] text-fg-muted">
+            基础设施自动扩缩，附带仪表盘、备份、团队协作以及 99.9% 可用性 SLA。按用量计费，起步赠送免费额度，无固定月费或席位费。
+          </p>
+        </div>
+        <span
+          class="inline-flex shrink-0 items-center gap-2 rounded-md bg-accent px-4 py-2.5 text-[14.5px] font-medium text-accent-fg transition-transform duration-200 group-hover:-translate-y-px"
+        >
+          对比方案
+          <Icon name="tabler:arrow-right" class="size-4" aria-hidden="true" />
+        </span>
+      </a>
+    </div>
+  </section>
+
+  <!-- 9 · CTA -->
+  <section class="border-t border-line bg-bg-sunken" data-reveal>
+    <div class="shell py-16 lg:py-20">
+      <div class="brand-band relative overflow-hidden rounded-xl px-6 py-12 sm:px-10 lg:px-14 lg:py-16">
+        <div
+          class="pointer-events-none absolute inset-0 opacity-60"
+          style="background-image:linear-gradient(to right,rgb(255 255 255 / 0.14) 1px,transparent 1px),linear-gradient(to bottom,rgb(255 255 255 / 0.14) 1px,transparent 1px);background-size:56px 56px;mask-image:radial-gradient(70% 90% at 80% 20%,black,transparent)"
+          aria-hidden="true"
+        >
+        </div>
+        <div class="relative max-w-[30em]">
+          <h2 class="text-[26px] leading-[1.3] font-semibold text-white sm:text-[32px]">
+            让你的智能体开始学习
+          </h2>
+          <p class="mt-4 text-[15.5px] leading-[1.9] text-white/80">
+            用 Docker 跑起本地服务端，或把客户端指向托管端点，两分钟接入。
+          </p>
+        </div>
+        <div class="relative mt-8 flex flex-wrap items-center gap-3">
+          <a
+            href="/quickstart"
+            class="group inline-flex items-center gap-2 rounded-sm bg-white px-5 py-3 text-[15px] font-medium text-[#0a2233] transition-transform duration-200 active:translate-y-px"
+          >
+            快速开始
+            <Icon
+              name="tabler:arrow-right"
+              class="size-4 transition-transform duration-200 group-hover:translate-x-0.5"
+              aria-hidden="true"
+            />
+          </a>
+          <a
+            href={site.cloudSignup}
+            target="_blank"
+            rel="noreferrer noopener"
+            class="inline-flex items-center gap-2 rounded-sm border border-white/45 px-5 py-3 text-[15px] text-white transition-colors duration-200 hover:border-white/80 active:translate-y-px"
+          >
+            注册 Cloud
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

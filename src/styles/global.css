@@ -1,0 +1,489 @@
+@import 'tailwindcss';
+
+@import '@fontsource-variable/geist/index.css';
+@import '@fontsource-variable/geist-mono/index.css';
+
+/* ==========================================================================
+   Hindsight 中文站 · 设计系统
+   品牌色来自官方 banner：青绿 -> 深蓝。单一强调色（青），蓝色仅作渐变搭档。
+   形状锁：表面 14px / 内件 10px / 控件 7px / 状态点 pill
+   ========================================================================== */
+
+@theme {
+  --font-sans:
+    'Geist Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', 'PingFang SC',
+    'HarmonyOS Sans SC', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+  --font-mono:
+    'Geist Mono Variable', ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono',
+    monospace;
+
+  /* 表面：宣纸暖白 + 墨色文字 */
+  --color-bg: #faf8f3;
+  --color-bg-elev: #ffffff;
+  --color-bg-sunken: #f0e9db;
+  --color-line: #e3d7c2;
+  --color-line-soft: #ece3d0;
+  --color-line-strong: #c6b493;
+
+  /* 文字 */
+  --color-fg: #1d1712;
+  --color-fg-muted: #5d5347;
+  --color-fg-subtle: #7f7462;
+
+  /* 强调色：朱砂印泥红（全站唯一） */
+  --color-accent: #b33627;
+  --color-accent-strong: #8f281b;
+  --color-accent-fg: #ffffff;
+  --color-accent-wash: #f7e2d9;
+
+  /* 品牌渐变搭档：赭石 */
+  --color-brand-ember: #9a621c;
+  --color-brand-ink: #5f2c14;
+
+  /* 语义分类色（仅用于数据编码，绝不作文案或按钮色） */
+  --color-cat-1: #b33627;
+  --color-cat-2: #b97a1e;
+  --color-cat-3: #4c443a;
+  --color-cat-4: #8a6d1f;
+
+  --radius-xs: 4px;
+  --radius-sm: 7px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+
+  --shadow-soft: 0 16px 36px -30px rgb(48 28 14 / 0.38);
+  --shadow-panel: 0 26px 52px -38px rgb(48 28 14 / 0.3);
+  --shadow-lift: 0 30px 64px -40px rgb(48 28 14 / 0.32);
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+
+  --animate-marquee: marquee 56s linear infinite;
+  --animate-drift: drift 26s var(--ease-in-out-quart) infinite;
+  --animate-sheen: sheen 7s var(--ease-in-out-quart) infinite;
+  --animate-flow: flow 3.4s linear infinite;
+  --animate-breathe: breathe 5.5s var(--ease-in-out-quart) infinite;
+}
+
+@keyframes marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(3%, -4%, 0) scale(1.08);
+  }
+}
+
+@keyframes sheen {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes flow {
+  to {
+    stroke-dashoffset: -48;
+  }
+}
+
+@keyframes progress-grow {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* ==========================================================================
+   浅色主题
+   ========================================================================== */
+
+@layer theme {
+  [data-theme='dark'] {
+    --color-bg: #141110;
+    --color-bg-elev: #1d1814;
+    --color-bg-sunken: #0d0b09;
+    --color-line: #2c251d;
+    --color-line-soft: #211b15;
+    --color-line-strong: #473b2c;
+
+    --color-fg: #f0e8da;
+    --color-fg-muted: #a89b86;
+    --color-fg-subtle: #716556;
+
+    --color-accent: #e0684a;
+    --color-accent-strong: #c8552f;
+    --color-accent-fg: #2a0f0a;
+    --color-accent-wash: #2b1410;
+
+    --color-brand-ember: #d08a3e;
+    --color-brand-ink: #8a4a1c;
+
+    --color-cat-1: #e0684a;
+    --color-cat-2: #e0a44a;
+    --color-cat-3: #9a8d76;
+    --color-cat-4: #c9a227;
+
+    --shadow-soft: 0 18px 40px -28px rgb(12 7 4 / 0.9);
+    --shadow-panel: 0 32px 64px -40px rgb(10 6 4 / 0.95);
+    --shadow-lift: 0 30px 70px -36px rgb(8 5 3 / 0.9);
+  }
+}
+
+/* ==========================================================================
+   基础层
+   ========================================================================== */
+
+@layer base {
+  *,
+  ::before,
+  ::after {
+    border-color: var(--color-line);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 6.5rem;
+    overflow-x: clip;
+  }
+
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    font-feature-settings: 'cv11', 'ss01';
+    font-optical-sizing: auto;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* 中文正文需要更松的行距，标题则收紧 */
+  p,
+  li {
+    line-height: 1.85;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    letter-spacing: -0.015em;
+    line-height: 1.24;
+    text-wrap: balance;
+  }
+
+  ::selection {
+    background-color: color-mix(in oklab, var(--color-accent) 26%, transparent);
+    color: var(--color-fg);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+    border-radius: 3px;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
+  ::-webkit-scrollbar {
+    width: 11px;
+    height: 11px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--color-bg-sunken);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-line-strong);
+    border: 3px solid var(--color-bg-sunken);
+    border-radius: 99px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-fg-subtle);
+  }
+}
+
+/* ==========================================================================
+   基元
+   ========================================================================== */
+
+@layer components {
+  .shell {
+    width: 100%;
+    max-width: 82rem;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+
+  @media (min-width: 640px) {
+    .shell {
+      padding-inline: 2rem;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .shell {
+      padding-inline: 2.75rem;
+    }
+  }
+
+  /* 数字：等宽，避免跳动 */
+  .nums {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum';
+  }
+
+  /* 表面：顶部一道内高光，模拟光线掠过边缘 */
+  .surface {
+    position: relative;
+    background-color: var(--color-bg-elev);
+    box-shadow: inset 0 1px 0 color-mix(in oklab, var(--color-fg) 6%, transparent);
+  }
+
+  /* 极细网格底纹 */
+  .grid-field {
+    background-image:
+      linear-gradient(
+        to right,
+        color-mix(in oklab, var(--color-line) 60%, transparent) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        to bottom,
+        color-mix(in oklab, var(--color-line) 60%, transparent) 1px,
+        transparent 1px
+      );
+    background-size: 72px 72px;
+  }
+
+  /* 大范围柔光氛围 */
+  .atmosphere {
+    background-image:
+      radial-gradient(
+        68% 52% at 82% 4%,
+        color-mix(in oklab, var(--color-accent) 12%, transparent) 0%,
+        transparent 62%
+      ),
+      radial-gradient(
+        52% 46% at 8% 32%,
+        color-mix(in oklab, var(--color-brand-ember) 13%, transparent) 0%,
+        transparent 60%
+      );
+  }
+
+  /* 品牌主视觉：朱砂 → 赭石大面积渐变，水印网格 */
+  .brand-hero {
+    background-image:
+      linear-gradient(
+        115deg,
+        color-mix(in oklab, var(--color-accent) 13%, transparent) 0%,
+        color-mix(in oklab, var(--color-brand-ember) 12%, transparent) 46%,
+        transparent 78%
+      ),
+      radial-gradient(
+        44% 68% at 88% 12%,
+        color-mix(in oklab, var(--color-brand-ember) 15%, transparent) 0%,
+        transparent 64%
+      );
+  }
+
+  /* 深色品牌带：白字 CTA 专用，对比度 AA 以上 */
+  .brand-band {
+    background-color: #7e2418;
+    background-image:
+      linear-gradient(112deg, #9c3220 0%, #7c4a1c 52%, #5f3411 100%),
+      linear-gradient(to bottom, rgb(255 255 255 / 0.1), transparent 22%);
+  }
+
+  [data-theme='dark'] .brand-band {
+    background-color: #2a0f0a;
+    background-image:
+      linear-gradient(112deg, #6e2314 0%, #5f3a14 52%, #40250c 100%),
+      linear-gradient(to bottom, rgb(255 255 255 / 0.08), transparent 22%);
+  }
+
+  /* 胶片颗粒：固定层，不参与滚动重绘 */
+  .grain::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    pointer-events: none;
+    opacity: 0.14;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  }
+
+  [data-theme='dark'] .grain::after {
+    opacity: 0.32;
+    mix-blend-mode: overlay;
+  }
+
+  /* 行内链接：下划线从左扫出 */
+  .sweep {
+    background-image: linear-gradient(var(--color-accent), var(--color-accent));
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    background-size: 0 1px;
+    transition:
+      background-size 0.35s var(--ease-out-expo),
+      color 0.25s ease;
+  }
+
+  .sweep:hover {
+    background-size: 100% 1px;
+  }
+
+  /* 指针跟随的边缘光 */
+  .spotlight::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: radial-gradient(
+      180px circle at var(--mx, 50%) var(--my, 0%),
+      color-mix(in oklab, var(--color-accent) 42%, transparent),
+      transparent 70%
+    );
+    mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+  }
+
+  .spotlight:hover::before {
+    opacity: 1;
+  }
+
+  /* 顶部阅读进度：纯 CSS 滚动时间线，不支持则整体隐藏 */
+  .progress-track {
+    position: fixed;
+    inset-inline: 0;
+    top: 0;
+    height: 2px;
+    z-index: 45;
+    pointer-events: none;
+  }
+
+  .progress-bar {
+    height: 100%;
+    width: 100%;
+    transform-origin: 0 50%;
+    transform: scaleX(0);
+    background: linear-gradient(90deg, var(--color-accent), var(--color-brand-ember));
+  }
+
+  @supports (animation-timeline: scroll()) {
+    .progress-bar {
+      animation-name: progress-grow;
+      animation-duration: 1ms;
+      animation-fill-mode: both;
+      animation-timing-function: linear;
+      animation-timeline: scroll(root block);
+    }
+  }
+
+  @supports not (animation-timeline: scroll()) {
+    .progress-track {
+      display: none;
+    }
+  }
+
+  /* 记忆图：流动虚线 */
+  .flow-line {
+    stroke-dasharray: 5 11;
+    animation: flow 3.4s linear infinite;
+  }
+
+  .shiki {
+    background-color: transparent !important;
+  }
+
+  [data-theme='dark'] .shiki,
+  [data-theme='dark'] .shiki span {
+    color: var(--shiki-dark) !important;
+    font-style: var(--shiki-dark-font-style) !important;
+    font-weight: var(--shiki-dark-font-weight) !important;
+  }
+}
+
+/* ==========================================================================
+   滚动进入动效
+   ========================================================================== */
+
+.js-reveal [data-reveal] {
+  opacity: 0;
+  transform: translate3d(0, 20px, 0);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .js-reveal [data-reveal].is-in {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+    transition:
+      opacity 0.75s var(--ease-out-expo),
+      transform 0.75s var(--ease-out-expo);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js-reveal [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .flow-line {
+    animation: none;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* 阅读进度不是前庭动画，保留其时间线驱动 */
+  .progress-bar {
+    animation-duration: auto !important;
+  }
+}

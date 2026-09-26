@@ -1,0 +1,139 @@
+---
+import { nav, site } from '../data/site';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** 页面级主题：默认跟随系统 */
+  ogImage?: string;
+}
+
+const { title, description = site.description, ogImage = '/og-banner.png' } = Astro.props;
+
+const pageTitle = title ? `${title} · ${site.name} 中文文档` : `${site.name}：${site.tagline}`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta name="generator" content={Astro.generator} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={`${site.name} 中文文档`} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={new URL(ogImage, Astro.site)} />
+    <meta property="og:locale" content="zh_CN" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <meta name="theme-color" content="#07090b" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#fbfcfd" media="(prefers-color-scheme: light)" />
+
+    <script is:inline>
+      (function () {
+        var d = document.documentElement;
+        try {
+          // 显性选择优先；首次访问默认浅色（品牌主视觉）。
+          var saved = localStorage.getItem('theme');
+          d.dataset.theme = saved === 'light' || saved === 'dark' ? saved : 'light';
+        } catch (e) {
+          d.dataset.theme = 'light';
+        }
+        if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          d.classList.add('js-reveal');
+        }
+      })();
+    </script>
+  </head>
+
+  <body class="grain min-h-[100dvh] bg-bg text-fg antialiased">
+    <div class="progress-track" aria-hidden="true">
+      <div class="progress-bar"></div>
+    </div>
+
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[60] focus:rounded-md focus:bg-accent focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-accent-fg"
+      >跳到主内容</a
+    >
+
+    <Nav items={nav} current={Astro.url.pathname} />
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <Footer />
+
+    <script>
+      // 滚动进入动效
+      const reveal = () => {
+        const targets = document.querySelectorAll<HTMLElement>('[data-reveal]:not(.is-in)');
+        if (!targets.length) return;
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (!entry.isIntersecting) continue;
+              entry.target.classList.add('is-in');
+              io.unobserve(entry.target);
+            }
+          },
+          { rootMargin: '0px 0px -48px 0px', threshold: 0 },
+        );
+        targets.forEach((el) => io.observe(el));
+      };
+      reveal();
+
+      // 代码块复制
+      document.addEventListener('click', async (event) => {
+        const target = event.target;
+        if (!(target instanceof Element)) return;
+        const button = target.closest<HTMLButtonElement>('[data-copy]');
+        if (!button) return;
+        const code = button.closest('[data-code]')?.querySelector('code')?.textContent ?? '';
+        try {
+          await navigator.clipboard.writeText(code);
+          const label = button.querySelector('[data-copy-label]');
+          if (label) {
+            label.textContent = '已复制';
+            window.setTimeout(() => {
+              label.textContent = '复制';
+            }, 1600);
+          }
+        } catch {
+          button.setAttribute('data-copy-state', 'error');
+        }
+      });
+
+      // 指针跟随的边缘光（只写 CSS 变量，不触发任何渲染周期）
+      const finePointer = window.matchMedia('(pointer: fine)');
+      if (finePointer.matches) {
+        document.addEventListener(
+          'pointermove',
+          (event) => {
+            const target = event.target;
+            if (!(target instanceof Element)) return;
+            const host = target.closest<HTMLElement>('[data-spotlight]');
+            if (!host) return;
+            const rect = host.getBoundingClientRect();
+            host.style.setProperty('--mx', `${event.clientX - rect.left}px`);
+            host.style.setProperty('--my', `${event.clientY - rect.top}px`);
+          },
+          { passive: true },
+        );
+      }
+    </script>
+  </body>
+</html>

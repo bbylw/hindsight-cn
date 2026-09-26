@@ -1,0 +1,41 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import Prose from '../components/Prose.astro';
+import NextPrev from '../components/NextPrev.astro';
+import TocRail from '../components/TocRail.astro';
+
+interface Props {
+  title: string;
+  lead: string;
+  eyebrow?: string;
+  description?: string;
+  toc?: readonly { label: string; href: string }[];
+}
+
+const { title, lead, eyebrow, description = lead, toc } = Astro.props;
+const hasToc = Boolean(toc && toc.length);
+---
+
+<BaseLayout title={title} description={description}>
+  <PageHeader title={title} lead={lead} eyebrow={eyebrow}>
+    <slot name="header" />
+  </PageHeader>
+
+  <div class="shell py-14 lg:py-20">
+    <div
+      class:list={[
+        'grid grid-cols-1 gap-x-16',
+        hasToc && 'xl:grid-cols-[minmax(0,1fr)_13.5rem]',
+      ]}
+    >
+      <Prose class="min-w-0">
+        <slot />
+      </Prose>
+      {hasToc && <TocRail items={toc!} />}
+    </div>
+    <slot name="after" />
+  </div>
+
+  <NextPrev />
+</BaseLayout>

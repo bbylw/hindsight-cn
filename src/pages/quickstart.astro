@@ -1,0 +1,229 @@
+---
+import DocLayout from '../layouts/DocLayout.astro';
+import CodePanel from '../components/CodePanel.astro';
+import Callout from '../components/Callout.astro';
+import InstallTabs from '../components/InstallTabs.astro';
+import { platforms, site } from '../data/site';
+import { snippets } from '../data/snippets';
+
+const toc = [
+  { label: '启动服务端', href: '#服务端' },
+  { label: '25+ 家 LLM 提供商', href: '#llm-提供商' },
+  { label: '托管版', href: '#托管版' },
+  { label: '连接客户端', href: '#客户端' },
+  { label: '支持的平台', href: '#平台' },
+  { label: 'Python 嵌入式', href: '#嵌入式' },
+  { label: '编程智能体', href: '#编程智能体' },
+];
+
+const providers = {
+  cloud: [
+    'openai',
+    'anthropic',
+    'gemini',
+    'groq',
+    'bedrock',
+    'vertexai',
+    'minimax',
+    'deepseek',
+    'atlas',
+    'meta',
+  ],
+  local: ['ollama', 'lmstudio', 'llamacpp'],
+  gateway: ['litellm', 'litellmrouter'],
+  subscription: ['openai-codex', 'claude-code', 'cursor', 'github-copilot'],
+};
+---
+
+<DocLayout
+  title="快速开始"
+  eyebrow="Quickstart"
+  toc={toc}
+  lead="四种方式启动服务端：Docker 一条命令、裸机 pip、Kubernetes Helm，或直接用托管版跳过部署。启动后用 Python、Node.js、Go 或 CLI 客户端连上即可。"
+>
+  <Fragment slot="header">
+    <ul class="mt-9 flex flex-wrap gap-2 xl:hidden">
+      {
+        toc.map((item) => (
+          <li>
+            <a
+              href={item.href}
+              class="inline-flex items-center gap-1.5 rounded-sm border border-line px-3 py-1.5 text-[13.5px] text-fg-muted transition-colors duration-200 hover:border-line-strong hover:text-fg"
+            >
+              {item.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </Fragment>
+
+  <h2 id="服务端">启动服务端</h2>
+
+  <InstallTabs />
+
+  <div class="mt-6">
+    <Callout title="服务地址">
+      <p>
+        API <code>http://localhost:8888</code>，UI <code>http://localhost:9999</code>。
+      </p>
+    </Callout>
+  </div>
+
+  <h3 id="llm-提供商">25+ 家 LLM 提供商</h3>
+
+  <p>
+    通过 <code>HINDSIGHT_API_LLM_PROVIDER</code> 选择模型来源。支持云端托管、完全本地、任意 OpenAI
+    兼容端点，以及可触达其余厂商的网关。
+  </p>
+
+  <ul>
+    <li>
+      <strong>云端托管：</strong>
+      {
+        providers.cloud.map((name, i) => (
+          <>
+            <code>{name}</code>
+            {i < providers.cloud.length - 1 ? '、' : ''}
+          </>
+        ))
+      }
+    </li>
+    <li>
+      <strong>完全本地：</strong>
+      {providers.local.map((name) => <code>{name}</code>)}等
+    </li>
+    <li>
+      <strong>网关：</strong>
+      {providers.gateway.map((name) => <code>{name}</code>)}等
+    </li>
+    <li>
+      <strong>已有订阅直接复用（无需 API Key）：</strong>
+      {providers.subscription.map((name) => <code>{name}</code>)}，分别对应 ChatGPT Plus/Pro、Claude
+      Pro/Max、Cursor 与 GitHub Copilot。
+    </li>
+  </ul>
+
+  <p>
+    完整列表见官方文档的<a
+      href="https://hindsight.vectorize.io/developer/models"
+      target="_blank"
+      rel="noreferrer noopener">支持的模型</a
+    >。
+  </p>
+
+  <h3 id="托管版">托管版（无需服务端）</h3>
+
+  <p>
+    <a href={site.pricing} target="_blank" rel="noreferrer noopener">Hindsight Cloud</a> 是托管方案：基础设施自动扩缩，附带仪表盘、备份、团队协作以及
+    99.9% 可用性 SLA。按用量计费，起步赠送免费额度，无固定月费或席位费。把任意客户端指向
+    <code>https://api.hindsight.vectorize.io</code> 并带上你的 API Key，即可完全跳过部署环节。
+  </p>
+
+  <div class="code-block">
+    <CodePanel code={snippets.webPromo} lang="bash" title="指向托管端点" />
+  </div>
+
+  <p>
+    <a href={site.pricing} target="_blank" rel="noreferrer noopener">对比自托管、Cloud 与企业版</a>，或
+    <a href={site.cloudSignup} target="_blank" rel="noreferrer noopener">直接注册</a>。
+  </p>
+
+  <h2 id="客户端">连接客户端</h2>
+
+  <div class="code-block">
+    <CodePanel code={snippets.installClients} lang="bash" title="安装客户端" />
+  </div>
+
+  <h3>Python</h3>
+
+  <div class="code-block">
+    <CodePanel code={snippets.pythonClient} lang="python" title="hindsight_client" />
+  </div>
+
+  <h3>Node.js / TypeScript</h3>
+
+  <div class="code-block">
+    <CodePanel code={snippets.nodeClient} lang="javascript" title="@vectorize-io/hindsight-client" />
+  </div>
+
+  <h2 id="平台">支持的平台</h2>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>平台</th>
+          <th>Docker</th>
+          <th>裸机（pip）</th>
+          <th>嵌入式数据库（pg0）</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          platforms.map((row) => (
+            <tr>
+              <td>
+                {row.os}
+                <span class="block font-mono text-[12.5px] text-fg-subtle">{row.arch}</span>
+              </td>
+              <td class="text-accent">支持</td>
+              <td class={row.pip === 'warn' ? 'text-cat-4' : 'text-accent'}>
+                {row.pip === 'warn' ? '需 slim 版' : '支持'}
+              </td>
+              <td class="text-accent">支持</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <div class="mt-6">
+    <Callout variant="warn" title="Intel Mac">
+      <p>
+        请改用 <code>hindsight-all-slim</code> 镜像。Windows 与离线（air-gapped）环境的完整选项见官方
+        <a
+          href="https://hindsight.vectorize.io/developer/installation"
+          target="_blank"
+          rel="noreferrer noopener">安装指南</a>。
+      </p>
+    </Callout>
+  </div>
+
+  <h2 id="嵌入式">Python 嵌入式（无需服务端）</h2>
+
+  <p>
+    不想单独起进程时，可以直接在进程内启动一个完整服务端（自带 pg0 嵌入式数据库），适合脚本、Notebook 与本地工具。
+  </p>
+
+  <div class="code-block">
+    <CodePanel code="pip install hindsight-all -U" lang="bash" title="安装" />
+  </div>
+
+  <div class="code-block">
+    <CodePanel code={snippets.pythonEmbedded} lang="python" title="进程内服务端" />
+  </div>
+
+  <p>
+    <a
+      href="https://hindsight.vectorize.io/sdks/hindsight-all-npm"
+      target="_blank"
+      rel="noreferrer noopener">Node.js 等效方案</a>与
+    <a
+      href="https://hindsight.vectorize.io/sdks/embed"
+      target="_blank"
+      rel="noreferrer noopener">守护进程 CLI</a>同样可用。
+  </p>
+
+  <h2 id="编程智能体">编程智能体用户</h2>
+
+  <p>
+    正在使用编程智能体的话，可以安装 Hindsight 文档技能，编码时即时查阅文档。适用于 Claude Code、Cursor
+    及其他 AI 编程助手。
+  </p>
+
+  <div class="code-block">
+    <CodePanel code={snippets.docsSkill} lang="bash" title="安装文档技能" />
+  </div>
+</DocLayout>

@@ -1,0 +1,45 @@
+---
+import { Icon } from 'astro-icon/components';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { nav } from '../data/site';
+---
+
+<BaseLayout title="页面不存在" description="你访问的页面不存在。">
+  <div class="shell flex min-h-[60dvh] flex-col justify-center py-20">
+    <p class="font-mono text-[12px] tracking-[0.2em] text-accent uppercase">404</p>
+    <h1 class="mt-5 text-[30px] leading-[1.25] font-semibold sm:text-[40px]">这个页面不在记忆里</h1>
+    <p class="mt-5 max-w-[46ch] text-[16.5px] leading-[1.9] text-fg-muted">
+      要不试试从下面的入口重新找一遍，或者回到首页看看 Hindsight 到底能做什么。
+    </p>
+
+    <div class="mt-9 flex flex-wrap gap-3">
+      <a
+        href="/"
+        class="inline-flex items-center gap-2 rounded-md bg-accent px-5 py-3 text-[15px] font-medium text-accent-fg transition-[transform,background-color] duration-200 hover:bg-accent-strong active:translate-y-px"
+      >
+        <Icon name="tabler:arrow-left" class="size-4" aria-hidden="true" />
+        回到首页
+      </a>
+    </div>
+
+    <ul class="mt-12 grid gap-x-8 gap-y-3 border-t border-line pt-8 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        nav.map((item) => (
+          <li>
+            <a
+              href={item.href}
+              class="group flex items-center justify-between gap-2 text-[15px] text-fg-muted transition-colors duration-200 hover:text-fg"
+            >
+              {item.label}
+              <Icon
+                name="tabler:arrow-right"
+                class="size-4 opacity-0 transition-all duration-200 group-hover:translate-x-0.5 group-hover:opacity-100"
+                aria-hidden="true"
+              />
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</BaseLayout>

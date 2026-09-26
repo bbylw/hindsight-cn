@@ -1,0 +1,22 @@
+---
+import { Icon } from 'astro-icon/components';
+
+interface Props {
+  class?: string;
+}
+
+const { class: className = '' } = Astro.props;
+---
+
+<button
+  type="button"
+  data-copy
+  class:list={[
+    'inline-flex shrink-0 items-center gap-1.5 rounded-sm px-2 py-1 font-mono text-[11.5px] text-fg-subtle transition-colors duration-200 hover:bg-bg-elev hover:text-fg active:translate-y-px',
+    className,
+  ]}
+  aria-label="复制代码"
+>
+  <Icon name="tabler:copy" class="size-3.5" aria-hidden="true" />
+  <span data-copy-label>复制</span>
+</button>

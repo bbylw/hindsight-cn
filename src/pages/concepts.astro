@@ -1,0 +1,279 @@
+---
+import { Icon } from 'astro-icon/components';
+import DocLayout from '../layouts/DocLayout.astro';
+import CodePanel from '../components/CodePanel.astro';
+import Callout from '../components/Callout.astro';
+import { memoryTypes, operations } from '../data/site';
+import { snippets } from '../data/snippets';
+
+const toc = [
+  { label: '记忆类型', href: '#记忆类型' },
+  { label: 'Retain', href: '#retain' },
+  { label: 'Recall', href: '#recall' },
+  { label: 'Reflect', href: '#reflect' },
+  { label: '观察', href: '#观察' },
+  { label: '心智模型与知识页', href: '#心智模型与知识页' },
+  { label: '记忆库', href: '#记忆库' },
+];
+
+const doc = (path: string) => `https://hindsight.vectorize.io/${path}`;
+
+const mentalModelFacts = [
+  { label: '谁来写答案', value: 'Hindsight 在 bank 学习过程中于后台持续重写' },
+  { label: '读取成本', value: '一次数据库读取，无需检索，也无需调用 LLM' },
+  { label: '定义成本', value: '只需定义一次问题' },
+] as const;
+
+const knowledgePageFacts = [
+  { label: '内容', value: '由 bank 自行书写、关于自身的鲜活文档' },
+  { label: '组织', value: '像 wiki 一样按文件夹组织、可搜索' },
+  { label: '导出', value: '能以普通 markdown 形式投影到磁盘' },
+] as const;
+---
+
+<DocLayout
+  title="核心概念"
+  eyebrow="Concepts"
+  toc={toc}
+  lead="Hindsight 用仿生数据结构组织智能体记忆：世界事实、经历、观察与心智模型。所有记忆都通过 retain、recall、reflect 三个操作进出 bank。"
+>
+  <Fragment slot="header">
+    <ul class="mt-9 flex flex-wrap gap-2 xl:hidden">
+      {
+        toc.map((item) => (
+          <li>
+            <a
+              href={item.href}
+              class="inline-flex rounded-sm border border-line px-3 py-1.5 text-[13.5px] text-fg-muted transition-colors duration-200 hover:border-line-strong hover:text-fg"
+            >
+              {item.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </Fragment>
+
+  <h2 id="记忆类型">记忆类型</h2>
+
+  <p>
+    多数智能体记忆实现依赖基础的向量检索，偶尔使用知识图谱。Hindsight 采用仿生数据结构来组织智能体记忆，更接近人类记忆的工作方式。
+  </p>
+
+  <div class="mt-8 grid gap-px overflow-hidden rounded-lg border border-line bg-line sm:grid-cols-2">
+    {
+      memoryTypes.map((type) => (
+        <article class="bg-bg p-5">
+          <div class="flex items-center gap-2.5">
+            <span
+              class="size-2 shrink-0 rounded-full"
+              style={`background:${type.colorVar}`}
+              aria-hidden="true"
+            />
+            <h3 class="!m-0 !text-[16px] font-semibold">{type.name}</h3>
+            <span class="font-mono text-[11px] text-fg-subtle">{type.en}</span>
+          </div>
+          <p class="!mt-3 text-[14.5px]">{type.summary}</p>
+          <p class="mt-3.5 border-l border-line-strong pl-3.5 text-[13.5px] text-fg-muted">
+            {type.example}
+          </p>
+        </article>
+      ))
+    }
+  </div>
+
+  <p class="mt-6">
+    记忆存放在 <strong>bank（记忆库）</strong> 中。新记忆加入时，会被推入「世界事实」或「经历」通道之一，再以实体、关系、时间序列的组合形式表示，并辅以稀疏与稠密向量表征，以便后续召回。
+  </p>
+
+  <h2 id="三个核心操作">三个核心操作</h2>
+
+  {
+    operations.map((op) => (
+      <section>
+        <h3 id={op.key} class="!mt-12 flex items-center gap-2.5 !text-[19px]">
+          <span
+            class="font-mono text-[12px] tracking-[0.1em] uppercase"
+            style={`color:${op.colorVar}`}
+          >
+            {op.name}
+          </span>
+          <span class="rounded-xs border border-line px-2 py-0.5 font-sans text-[12px] text-fg-subtle">
+            {op.verb}
+          </span>
+        </h3>
+
+        <p>{op.summary}</p>
+
+        {op.key === 'retain' && (
+          <>
+            <p>
+              它告诉 Hindsight <strong>保留</strong>你作为输入传入的信息。抽取出的规范化实体、时间序列、搜索索引与元数据，共同构成后续
+              recall 与 reflect 精准检索记忆的通路。
+            </p>
+            <div class="code-block">
+              <CodePanel code={snippets.retain} lang="python" title="retain" />
+            </div>
+            <p>
+              <a href={doc('developer/retain')} target="_blank" rel="noreferrer noopener">Retain 文档</a>
+            </p>
+          </>
+        )}
+
+        {op.key === 'recall' && (
+          <>
+            <p>recall 操作用于检索记忆，这些记忆可来自任意记忆类型（世界事实、经历等）。</p>
+            <div class="code-block">
+              <CodePanel code={snippets.recall} lang="python" title="recall" />
+            </div>
+            <p>recall 并行执行 4 种检索策略：</p>
+            <ul>
+              {op.strategies?.map((s) => (
+                <li>
+                  <strong>{s.name}：</strong>
+                  {s.detail}
+                </li>
+              ))}
+            </ul>
+            <p>
+              各路结果会被合并，先以倒数排名融合（reciprocal rank fusion）按相关性排序，再用交叉编码器（cross-encoder）重排模型重排，最后按需裁剪以适配
+              token 上限。
+            </p>
+            <p>
+              <a href={doc('developer/retrieval')} target="_blank" rel="noreferrer noopener">Recall 文档</a>
+            </p>
+          </>
+        )}
+
+        {op.key === 'reflect' && (
+          <>
+            <p>
+              reflect 操作对已有记忆做更深入的分析。它让智能体在记忆之间建立新的联系，并对自身世界形成更透彻的理解，适合回答那些需要深度思考、而非简单查表的问题。
+            </p>
+            <div class="code-block">
+              <CodePanel code={snippets.reflect} lang="python" title="reflect" />
+            </div>
+            <p>例如，reflect 适用的场景包括：</p>
+            <ul>
+              <li><strong>AI 项目经理</strong> 反思项目中需要规避的风险。</li>
+              <li><strong>销售智能体</strong> 反思为何某些外联消息有回应、另一些没有。</li>
+              <li><strong>支持智能体</strong> 反思客户现有产品文档未能解答的问题所在。</li>
+            </ul>
+            <p>
+              <a href={doc('developer/reflect')} target="_blank" rel="noreferrer noopener">Reflect 文档</a>
+            </p>
+          </>
+        )}
+      </section>
+    ))
+  }
+
+  <h2 id="观察">观察</h2>
+
+  <p>
+    被保留的事实不会始终堆成一摊。在后台，Hindsight 会把相关事实整合为<strong>观察</strong>，也就是 bank
+    随时间积累起来的、已去重的信念。
+  </p>
+
+  <p>
+    每条观察都保留支撑证据（含原文引用）与证明计数。当新证据到来时，它会被<strong>精炼</strong>而非覆盖，因此新信息会强化、削弱或延展既有信念，而不是悄无声息地替换掉它。
+  </p>
+
+  <p>
+    <a href={doc('developer/observations')} target="_blank" rel="noreferrer noopener">观察文档</a>
+  </p>
+
+  <h2 id="心智模型与知识页">心智模型与知识页</h2>
+
+  <div class="plain-links mt-6 grid gap-4 lg:grid-cols-2">
+    <article class="surface rounded-lg border border-line p-5">
+      <h3 class="!m-0 flex items-center gap-2 !text-[17px]">
+        <Icon name="tabler:brain" class="size-4.5 text-accent" aria-hidden="true" />
+        心智模型
+      </h3>
+      <p class="!mt-3 text-[14.5px]">
+        对某个 bank 某个问题的常驻回答，比如「该用户的偏好是什么」。你只需定义一次问题，Hindsight
+        负责写出答案、存储它，并在 bank 持续学习的过程中于后台重写它。
+      </p>
+      <dl class="mt-4 grid gap-2.5">
+        {
+          mentalModelFacts.map((fact) => (
+            <div class="flex gap-3 text-[13.5px]">
+              <dt class="w-[6.5rem] shrink-0 text-fg-subtle">{fact.label}</dt>
+              <dd class="text-fg-muted">{fact.value}</dd>
+            </div>
+          ))
+        }
+      </dl>
+      <p class="!mt-4 text-[14px]">
+        <a href={doc('developer/mental-models')} target="_blank" rel="noreferrer noopener">心智模型文档</a>
+      </p>
+    </article>
+
+    <article class="surface rounded-lg border border-line p-5">
+      <h3 class="!m-0 flex items-center gap-2 !text-[17px]">
+        <Icon name="tabler:file-stack" class="size-4.5 text-accent" aria-hidden="true" />
+        知识页
+      </h3>
+      <p class="!mt-3 text-[14.5px]">
+        隐藏了机制的心智模型：由 bank 自行书写、关于自身的鲜活文档。你只需提供名称与一个问题，其余决策都是可覆盖的默认值。
+      </p>
+      <dl class="mt-4 grid gap-2.5">
+        {
+          knowledgePageFacts.map((fact) => (
+            <div class="flex gap-3 text-[13.5px]">
+              <dt class="w-[6.5rem] shrink-0 text-fg-subtle">{fact.label}</dt>
+              <dd class="text-fg-muted">{fact.value}</dd>
+            </div>
+          ))
+        }
+      </dl>
+      <p class="!mt-4 text-[14px]">
+        <a href={doc('developer/knowledge-pages')} target="_blank" rel="noreferrer noopener">知识页文档</a>
+      </p>
+    </article>
+  </div>
+
+  <p class="mt-6">
+    读取心智模型只是一次数据库读取，无需检索，也无需调用 LLM。于是智能体可以带着一页已成定论的知识启动，而不必每次会话都重新发现。
+  </p>
+
+  <h2 id="记忆库">记忆库（Banks）</h2>
+
+  <p>
+    <strong>bank</strong> 是一个相互隔离的记忆存储，可以理解为一个用户、智能体或项目的「一颗大脑」。隔离是严格的，bank
+    之间不会泄漏。
+  </p>
+
+  <p>
+    bank 带有背景上下文与<strong>倾向特质</strong>（disposition traits，如怀疑、拘泥字面、共情），这些特质塑造了 reflect
+    在其记忆上推理的方式，并可由声明式的
+    <a href={doc('developer/api/bank-templates')} target="_blank" rel="noreferrer noopener">bank 模板</a>创建。
+  </p>
+
+  <h3>默认多语言</h3>
+
+  <p>
+    输入语言会被检测并端到端保留。事实保持原始语言，实体保留原生文字，张伟仍然是张伟，而不是「Zhang Wei」。
+    <a href={doc('developer/multilingual')} target="_blank" rel="noreferrer noopener">文档</a>
+  </p>
+
+  <h3>记忆防御（Memory Defense）</h3>
+
+  <p>
+    一项可按 bank 启用的策略，针对 45 种模式扫描每次 retain 中的密钥与 PII，要么对命中项做脱敏，要么在存入前直接拦截。
+  </p>
+
+  <div class="code-block">
+    <CodePanel code={snippets.memoryDefense} lang="bash" title="启用记忆防御" />
+  </div>
+
+  <div class="mt-6">
+    <Callout title="脱敏标记">
+      <p>
+        命中项会被替换为形如 <code>[REDACTED:github_token]</code> 的标记后再存入记忆。
+        <a href={doc('developer/memory-defense')} target="_blank" rel="noreferrer noopener">查看记忆防御文档</a>
+      </p>
+    </Callout>
+  </div>
+</DocLayout>

@@ -1,0 +1,34 @@
+---
+interface Props {
+  class?: string;
+  /** 是否展示文字标识 */
+  wordmark?: boolean;
+  size?: 'sm' | 'md';
+}
+
+const { class: className = '', wordmark = true, size = 'md' } = Astro.props;
+const box = size === 'sm' ? 'size-7 rounded-[7px]' : 'size-8 rounded-[8px]';
+const glyph = size === 'sm' ? 'text-[15px]' : 'text-[17px]';
+const text = size === 'sm' ? 'text-[15px]' : 'text-[17px]';
+---
+
+<span class:list={['inline-flex items-center gap-2.5', className]}>
+  <span
+    aria-hidden="true"
+    class:list={[
+      'relative grid shrink-0 place-items-center bg-accent font-bold text-white select-none',
+      box,
+      glyph,
+    ]}
+  >
+    记
+  </span>
+  {
+    wordmark && (
+      <span class="flex items-baseline gap-1.5">
+        <span class:list={['font-semibold tracking-[-0.02em]', text]}>Hindsight</span>
+        <span class="font-mono text-[10px] tracking-[0.16em] text-fg-subtle">中文</span>
+      </span>
+    )
+  }
+</span>

@@ -1,0 +1,72 @@
+---
+interface Props {
+  items: readonly { label: string; href: string }[];
+}
+
+const { items } = Astro.props;
+---
+
+<nav aria-label="本页目录" class="hidden xl:block">
+  <div class="sticky top-28">
+    <p
+      class="font-mono text-[10.5px] tracking-[0.2em] text-fg-subtle uppercase"
+    >
+      本页内容
+    </p>
+    <ul class="mt-4 grid gap-0.5 border-l border-line">
+      {
+        items.map((item) => (
+          <li>
+            <a
+              href={item.href}
+              data-toc-link={item.href.replace('#', '')}
+              class="-ml-px block border-l border-transparent py-1.5 pl-3.5 text-[13.5px] leading-snug text-fg-subtle transition-colors duration-200 hover:text-fg-muted data-[active]:border-accent data-[active]:text-fg"
+            >
+              {item.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</nav>
+
+<script>
+  const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-toc-link]'));
+  if (links.length) {
+    const ids = links.map((link) => link.dataset.tocLink ?? '').filter(Boolean);
+    const sections = ids
+      .map((id) => document.getElementById(id))
+      .filter((el): el is HTMLElement => Boolean(el));
+
+    let current = ids[0] ?? '';
+    const inBand = new Set<string>();
+
+    const paint = () => {
+      for (const link of links) {
+        const active = link.dataset.tocLink === current;
+        link.toggleAttribute('data-active', active);
+        if (active) link.setAttribute('aria-current', 'true');
+        else link.removeAttribute('aria-current');
+      }
+    };
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) inBand.add(entry.target.id);
+          else inBand.delete(entry.target.id);
+        }
+        const next = ids.find((id) => inBand.has(id));
+        if (next) {
+          current = next;
+          paint();
+        }
+      },
+      { rootMargin: '-104px 0px -72% 0px', threshold: 0 },
+    );
+
+    sections.forEach((section) => io.observe(section));
+    paint();
+  }
+</script>
