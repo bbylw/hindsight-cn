@@ -52,6 +52,7 @@ const tabs = [
           id={`tab-${tab.id}`}
           aria-controls={`panel-${tab.id}`}
           aria-selected={i === 0 ? 'true' : 'false'}
+          data-selected={i === 0 ? 'true' : undefined}
           tabindex={i === 0 ? 0 : -1}
           class="relative -mb-px rounded-t-sm px-3.5 py-2.5 text-[14px] text-fg-subtle transition-colors duration-200 hover:text-fg data-[selected]:font-medium data-[selected]:text-fg data-[selected]:after:absolute data-[selected]:after:inset-x-3 data-[selected]:after:-bottom-px data-[selected]:after:h-px data-[selected]:after:bg-accent"
         >

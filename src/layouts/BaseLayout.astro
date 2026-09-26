@@ -7,7 +7,6 @@ import '../styles/global.css';
 interface Props {
   title?: string;
   description?: string;
-  /** 页面级主题：默认跟随系统 */
   ogImage?: string;
 }
 
@@ -38,8 +37,8 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta property="og:locale" content="zh_CN" />
     <meta name="twitter:card" content="summary_large_image" />
 
-    <meta name="theme-color" content="#07090b" media="(prefers-color-scheme: dark)" />
-    <meta name="theme-color" content="#fbfcfd" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#141110" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#faf8f3" media="(prefers-color-scheme: light)" />
 
     <script is:inline>
       (function () {
@@ -113,7 +112,13 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
             }, 1600);
           }
         } catch {
-          button.setAttribute('data-copy-state', 'error');
+          const label = button.querySelector('[data-copy-label]');
+          if (label) {
+            label.textContent = '复制失败';
+            window.setTimeout(() => {
+              label.textContent = '复制';
+            }, 1600);
+          }
         }
       });
 

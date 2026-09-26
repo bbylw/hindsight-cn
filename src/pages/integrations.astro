@@ -101,7 +101,7 @@ const codingAgents = [
               {category.items.length}
             </span>
           </h3>
-          <ul class="!mt-4 flex flex-wrap gap-1.5">
+          <ul role="list" class="!mt-4 flex flex-wrap gap-1.5">
             {category.items.map((item) => (
               <li class="!mt-0 !pl-0 before:hidden">
                 <a
@@ -139,6 +139,7 @@ const codingAgents = [
     <div>
       <p class="!mt-0 text-[14px] text-fg-subtle">支持以下 CLI 智能体，数据摄取是自动的，无需任何初始化命令：</p>
       <ul
+        role="list"
         class="mt-4 flex snap-x snap-mandatory gap-2 overflow-x-auto pb-2 [scrollbar-width:thin]"
       >
         {

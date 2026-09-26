@@ -42,7 +42,7 @@ const providers = {
   lead="四种方式启动服务端：Docker 一条命令、裸机 pip、Kubernetes Helm，或直接用托管版跳过部署。启动后用 Python、Node.js、Go 或 CLI 客户端连上即可。"
 >
   <Fragment slot="header">
-    <ul class="mt-9 flex flex-wrap gap-2 xl:hidden">
+    <ul role="list" class="mt-9 flex flex-wrap gap-2 xl:hidden">
       {
         toc.map((item) => (
           <li>
@@ -77,7 +77,7 @@ const providers = {
     兼容端点，以及可触达其余厂商的网关。
   </p>
 
-  <ul>
+  <ul role="list">
     <li>
       <strong>云端托管：</strong>
       {
@@ -91,16 +91,36 @@ const providers = {
     </li>
     <li>
       <strong>完全本地：</strong>
-      {providers.local.map((name) => <code>{name}</code>)}等
+      {
+        providers.local.map((name, i) => (
+          <>
+            <code>{name}</code>
+            {i < providers.local.length - 1 ? '、' : ''}
+          </>
+        ))
+      }等
     </li>
     <li>
       <strong>网关：</strong>
-      {providers.gateway.map((name) => <code>{name}</code>)}等
+      {
+        providers.gateway.map((name, i) => (
+          <>
+            <code>{name}</code>
+            {i < providers.gateway.length - 1 ? '、' : ''}
+          </>
+        ))
+      }等
     </li>
     <li>
       <strong>已有订阅直接复用（无需 API Key）：</strong>
-      {providers.subscription.map((name) => <code>{name}</code>)}，分别对应 ChatGPT Plus/Pro、Claude
-      Pro/Max、Cursor 与 GitHub Copilot。
+      {
+        providers.subscription.map((name, i) => (
+          <>
+            <code>{name}</code>
+            {i < providers.subscription.length - 1 ? '、' : ''}
+          </>
+        ))
+      }，分别对应 ChatGPT Plus/Pro、Claude Pro/Max、Cursor 与 GitHub Copilot。
     </li>
   </ul>
 

@@ -40,7 +40,7 @@ const loops = [
   lead="Hindsight 既服务于对话式 AI 智能体，也服务于旨在自主执行任务的智能体。最理想的是那些需要融合记忆四项能力的智能体，也就是接近人类工作水平的 AI 员工。"
 >
   <Fragment slot="header">
-    <ul class="mt-9 flex flex-wrap gap-2 xl:hidden">
+    <ul role="list" class="mt-9 flex flex-wrap gap-2 xl:hidden">
       {
         toc.map((item) => (
           <li>
@@ -75,7 +75,7 @@ const loops = [
         width="1080"
         height="388"
         alt="按用户记忆的典型需求示意：跨会话保留用户偏好、事实细节，并按用户隔离数据。"
-        class="w-full rounded-md bg-white"
+        class="doc-shot w-full rounded-md bg-white"
         loading="lazy"
         decoding="async"
       />
@@ -90,7 +90,7 @@ const loops = [
         width="1080"
         height="787"
         alt="Hindsight 实现按用户记忆的流程示意：retain 时附带元数据，recall 与 reflect 时按元数据过滤。"
-        class="w-full rounded-md bg-white"
+        class="doc-shot w-full rounded-md bg-white"
         loading="lazy"
         decoding="async"
       />

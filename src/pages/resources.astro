@@ -25,7 +25,7 @@ const packages = [
   lead="官方文档、SDK 参考、论文与基准看板都在这里；社区入口包括 Slack 与 GitHub Issues。项目以 MIT 许可开源。"
 >
   <Fragment slot="header">
-    <ul class="mt-9 flex flex-wrap gap-2 xl:hidden">
+    <ul role="list" class="mt-9 flex flex-wrap gap-2 xl:hidden">
       {
         toc.map((item) => (
           <li>
@@ -48,7 +48,7 @@ const packages = [
       resourceLinks.map((group) => (
         <section class="rounded-lg border border-line bg-bg p-5">
           <h3 class="!m-0 !text-[15.5px] font-semibold">{group.group}</h3>
-          <ul class="!mt-4 grid gap-2.5">
+          <ul role="list" class="!mt-4 grid gap-2.5">
             {group.items.map((item) => (
               <li class="!mt-0 !pl-0 before:hidden">
                 <a

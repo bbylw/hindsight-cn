@@ -5,7 +5,7 @@
 
 /* ==========================================================================
    Hindsight 中文站 · 设计系统
-   品牌色来自官方 banner：青绿 -> 深蓝。单一强调色（青），蓝色仅作渐变搭档。
+   宣纸暖白底 + 朱砂印泥红单一强调色，赭石作渐变搭档。
    形状锁：表面 14px / 内件 10px / 控件 7px / 状态点 pill
    ========================================================================== */
 
@@ -17,9 +17,9 @@
     'Geist Mono Variable', ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono',
     monospace;
 
-  /* 表面：宣纸暖白 + 墨色文字 */
+  /* 表面：宣纸暖白 + 墨色文字（elev 保持暖调，不用纯白，避免在暖底上发冷） */
   --color-bg: #faf8f3;
-  --color-bg-elev: #ffffff;
+  --color-bg-elev: #fffcf6;
   --color-bg-sunken: #f0e9db;
   --color-line: #e3d7c2;
   --color-line-soft: #ece3d0;
@@ -334,6 +334,11 @@
       linear-gradient(to bottom, rgb(255 255 255 / 0.08), transparent 22%);
   }
 
+  /* 上游文档截图是浅色底，暗色下压暗避免整块刺眼 */
+  [data-theme='dark'] .doc-shot {
+    filter: brightness(0.88) saturate(0.96);
+  }
+
   /* 胶片颗粒：固定层，不参与滚动重绘 */
   .grain::after {
     content: '';
@@ -431,15 +436,23 @@
     animation: flow 3.4s linear infinite;
   }
 
-  .shiki {
+  /* Astro 7 的 <Code> 只把双主题色写进 --shiki-* 自定义属性，color 映射由站点负责 */
+  .astro-code {
     background-color: transparent !important;
   }
 
-  [data-theme='dark'] .shiki,
-  [data-theme='dark'] .shiki span {
-    color: var(--shiki-dark) !important;
-    font-style: var(--shiki-dark-font-style) !important;
-    font-weight: var(--shiki-dark-font-weight) !important;
+  .astro-code,
+  .astro-code span {
+    color: var(--shiki-light);
+    font-style: var(--shiki-light-font-style);
+    font-weight: var(--shiki-light-font-weight);
+  }
+
+  [data-theme='dark'] .astro-code,
+  [data-theme='dark'] .astro-code span {
+    color: var(--shiki-dark);
+    font-style: var(--shiki-dark-font-style);
+    font-weight: var(--shiki-dark-font-weight);
   }
 }
 

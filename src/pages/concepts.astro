@@ -38,7 +38,7 @@ const knowledgePageFacts = [
   lead="Hindsight 用仿生数据结构组织智能体记忆：世界事实、经历、观察与心智模型。所有记忆都通过 retain、recall、reflect 三个操作进出 bank。"
 >
   <Fragment slot="header">
-    <ul class="mt-9 flex flex-wrap gap-2 xl:hidden">
+    <ul role="list" class="mt-9 flex flex-wrap gap-2 xl:hidden">
       {
         toc.map((item) => (
           <li>
@@ -127,7 +127,7 @@ const knowledgePageFacts = [
               <CodePanel code={snippets.recall} lang="python" title="recall" />
             </div>
             <p>recall 并行执行 4 种检索策略：</p>
-            <ul>
+            <ul role="list">
               {op.strategies?.map((s) => (
                 <li>
                   <strong>{s.name}：</strong>
@@ -154,7 +154,7 @@ const knowledgePageFacts = [
               <CodePanel code={snippets.reflect} lang="python" title="reflect" />
             </div>
             <p>例如，reflect 适用的场景包括：</p>
-            <ul>
+            <ul role="list">
               <li><strong>AI 项目经理</strong> 反思项目中需要规避的风险。</li>
               <li><strong>销售智能体</strong> 反思为何某些外联消息有回应、另一些没有。</li>
               <li><strong>支持智能体</strong> 反思客户现有产品文档未能解答的问题所在。</li>
