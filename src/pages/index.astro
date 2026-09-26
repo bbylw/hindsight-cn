@@ -160,7 +160,11 @@ const reflectCases = [
           </a>
         </div>
         <p class="mt-8 border-t border-line pt-5 text-[13.5px] leading-relaxed text-fg-subtle">
-          数据已由弗吉尼亚理工 Sanghani 人工智能与数据分析中心及《华盛顿邮报》的研究合作方独立复现，其余分数由各家厂商自行上报。
+          数据已由<a
+            href="https://sanghani.cs.vt.edu/"
+            target="_blank"
+            rel="noreferrer noopener">弗吉尼亚理工 Sanghani 人工智能与数据分析中心</a
+          >及《华盛顿邮报》的研究合作方独立复现，其余分数由各家厂商自行上报。
         </p>
       </div>
 
@@ -390,13 +394,11 @@ const reflectCases = [
       </div>
     </div>
 
-    <div
-      class="mt-12 flex overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_6%,black_94%,transparent)]"
-    >
-      <ul class="flex shrink-0 gap-2.5 pr-2.5 motion-safe:animate-marquee">
+    <div class="shell mt-12">
+      <ul role="list" class="flex flex-wrap gap-2.5">
         {
-          [...integrationNames, ...integrationNames].map((name) => (
-            <li class="shrink-0 rounded-full border border-line bg-bg-elev px-3.5 py-1.5 text-[13.5px] whitespace-nowrap text-fg-muted">
+          integrationNames.map((name) => (
+            <li class="rounded-full border border-line bg-bg-elev px-3.5 py-1.5 text-[13.5px] text-fg-muted transition-colors duration-200 hover:border-line-strong hover:text-fg">
               {name}
             </li>
           ))
@@ -465,7 +467,7 @@ const reflectCases = [
         </h2>
         <p class="mt-5 text-[16px] leading-[1.9] text-fg-muted">
           需要应对开放式任务、根据用户反馈改变行为、并学习执行复杂任务以逼近人类工作水平的 AI
-          员工。用于 n8n 之类的简单工作流也能跑通，只是有些大材小用。
+          员工。用于 n8n 之类的简单工作流也能跑通，只是有些杀鸡用牛刀。
         </p>
       </div>
 

@@ -34,8 +34,23 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={new URL(ogImage, Astro.site)} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${site.name} 中文文档：${site.tagline}`} />
     <meta property="og:locale" content="zh_CN" />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={new URL(ogImage, Astro.site)} />
+
+    <script type="application/ld+json" set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      name: `${site.name} 中文文档`,
+      url: Astro.site?.toString(),
+      description: site.description,
+      inLanguage: 'zh-CN',
+    })} />
 
     <meta name="theme-color" content="#141110" media="(prefers-color-scheme: dark)" />
     <meta name="theme-color" content="#faf8f3" media="(prefers-color-scheme: light)" />

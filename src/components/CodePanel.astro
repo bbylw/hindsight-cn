@@ -29,7 +29,7 @@ const { code, lang = 'text', title, class: className = '' } = Astro.props;
       </div>
     )
   }
-  <div class="code-scroll flex min-w-0 items-start gap-4 px-4 py-4 sm:px-5 sm:py-[18px]">
+  <div class="flex min-w-0 items-start gap-4 px-4 py-4 sm:px-5 sm:py-[18px]">
     <div class="code-scroll min-w-0 flex-1 overflow-x-auto">
       <Code
         code={code.trim()}
@@ -83,14 +83,22 @@ const { code, lang = 'text', title, class: className = '' } = Astro.props;
     min-width: 100%;
   }
 
-  /* 代码块内的横向滚动条不参与视觉 */
-  .code-scroll,
-  .code-scroll :global(pre.astro-code) {
-    scrollbar-width: none;
+  /* 代码横向溢出时保留可见的细滚动条，避免「看不出来能滚」 */
+  .code-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-line-strong) transparent;
   }
 
-  .code-scroll::-webkit-scrollbar,
-  .code-scroll :global(pre.astro-code::-webkit-scrollbar) {
-    display: none;
+  .code-scroll::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  .code-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .code-scroll::-webkit-scrollbar-thumb {
+    background: var(--color-line-strong);
+    border-radius: 99px;
   }
 </style>

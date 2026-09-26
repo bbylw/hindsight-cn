@@ -59,20 +59,10 @@
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
 
-  --animate-marquee: marquee 56s linear infinite;
   --animate-drift: drift 26s var(--ease-in-out-quart) infinite;
   --animate-sheen: sheen 7s var(--ease-in-out-quart) infinite;
   --animate-flow: flow 3.4s linear infinite;
   --animate-breathe: breathe 5.5s var(--ease-in-out-quart) infinite;
-}
-
-@keyframes marquee {
-  from {
-    transform: translate3d(0, 0, 0);
-  }
-  to {
-    transform: translate3d(-50%, 0, 0);
-  }
 }
 
 @keyframes drift {

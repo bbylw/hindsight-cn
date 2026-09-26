@@ -38,18 +38,15 @@ export interface DeploymentItem {
 
 export const site = {
   name: 'Hindsight',
-  nameCn: '回溯',
   tagline: '会学习的智能体记忆',
   description:
     'Hindsight 是一套智能体记忆系统：不只回放对话历史，而是让智能体随时间真正学会。LongMemEval 94.6%，业界领先。',
-  docs: 'https://hindsight.vectorize.io',
   github: 'https://github.com/vectorize-io/hindsight',
   benchmarks: 'https://benchmarks.hindsight.vectorize.io/',
   pricing: 'https://vectorize.io/pricing',
   slack: 'https://vectorize.io/slack',
   paper: 'https://arxiv.org/abs/2512.12818',
   cloudSignup: 'https://ui.hindsight.vectorize.io/signup',
-  cloudApi: 'https://api.hindsight.vectorize.io',
 } as const;
 
 export const nav: NavItem[] = [
@@ -62,10 +59,10 @@ export const nav: NavItem[] = [
 ];
 
 export const benchmarks = [
-  { name: 'Hindsight', score: 94.6, highlight: true, note: 'Hindsight' },
-  { name: 'SuperMemory', score: 85.92, highlight: false, note: 'SuperMemory' },
-  { name: 'Zep', score: 71.2, highlight: false, note: 'Zep' },
-  { name: 'GPT-4o', score: 60.2, highlight: false, note: 'GPT-4o' },
+  { name: 'Hindsight', score: 94.6, highlight: true },
+  { name: 'SuperMemory', score: 85.92, highlight: false },
+  { name: 'Zep', score: 71.2, highlight: false },
+  { name: 'GPT-4o', score: 60.2, highlight: false },
 ] as const;
 
 export const memoryTypes: MemoryType[] = [

@@ -110,12 +110,10 @@ client.recall(bank_id="my-bank", query="What happened in June?")   # 时间检�
 
   reflect: `client.reflect(bank_id="my-bank", query="What should I know about Alice?")`,
 
-  memoryDefense: `# 每行一个标识，命中即拦截
+  memoryDefense: `# 每行一个标识，命中即脱敏或拦截
 HINDSIGHT_MEMORY_DEFENSE=github_token,aws_access_key,email,phone`,
 
   mcp: `http://localhost:8888/mcp/{bank_id}/`,
-
-  cloudPoint: `https://api.hindsight.vectorize.io`,
 
   webPromo: `export HINDSIGHT_API_LLM_API_KEY=sk-xxx
 # Cloud 版无需服务端：把客户端指向托管端点
