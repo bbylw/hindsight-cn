@@ -76,7 +76,7 @@ const metricFamilies = [
               aria-hidden="true"
             />
           </span>
-          <p class="!mt-2.5 !max-w-none text-[14px]">{item.detail}</p>
+          <p class="mt-2.5 max-w-none text-[14px]">{item.detail}</p>
         </a>
       ))
     }
@@ -90,22 +90,22 @@ const metricFamilies = [
 
   <div class="mt-6 grid gap-4 sm:grid-cols-2">
     <article class="rounded-lg border border-line bg-bg p-5">
-      <h3 class="!m-0 !text-[17px]">PostgreSQL + pgvector</h3>
-      <p class="!mt-2.5 text-[14.5px]">
+      <h3 class="m-0 text-[17px]">PostgreSQL + pgvector</h3>
+      <p class="mt-2.5 text-[14.5px]">
         默认路径。单机用内置的 pg0 嵌入式数据库即可，多机部署时指向外部 PostgreSQL 实例，或用官方 Helm
         chart 一并托管。
       </p>
-      <p class="!mt-3 text-[14px]">
+      <p class="mt-3 text-[14px]">
         <a href={doc('developer/storage')} target="_blank" rel="noreferrer noopener">存储文档</a>
       </p>
     </article>
     <article class="rounded-lg border border-line bg-bg p-5">
-      <h3 class="!m-0 !text-[17px]">Oracle AI Database 23ai</h3>
-      <p class="!mt-2.5 text-[14.5px]">
+      <h3 class="m-0 text-[17px]">Oracle AI Database 23ai</h3>
+      <p class="mt-2.5 text-[14.5px]">
         面向企业部署，功能与 PostgreSQL 后端完全对齐。如果你的组织已经把数据层统一到 Oracle，这是
         免去第二套数据库的理由。
       </p>
-      <p class="!mt-3 text-[14px]">
+      <p class="mt-3 text-[14px]">
         <a href={doc('developer/storage')} target="_blank" rel="noreferrer noopener">存储文档</a>
       </p>
     </article>
@@ -141,8 +141,8 @@ const metricFamilies = [
     {
       metricFamilies.map((metric) => (
         <div class="bg-bg p-5">
-          <p class="!m-0 font-mono text-[12.5px] text-accent">{metric.name}</p>
-          <p class="!mt-2 !max-w-none text-[14px]">{metric.detail}</p>
+          <p class="m-0 font-mono text-[12.5px] text-accent">{metric.name}</p>
+          <p class="mt-2 max-w-none text-[14px]">{metric.detail}</p>
         </div>
       ))
     }
@@ -191,11 +191,11 @@ const metricFamilies = [
     class="plain-links mt-6 flex flex-col gap-5 rounded-lg border border-line bg-bg p-6 sm:flex-row sm:items-center sm:justify-between"
   >
     <div class="max-w-[54ch]">
-      <p class="!m-0 flex items-center gap-2.5 text-[16px] font-medium text-fg">
+      <p class="m-0 flex items-center gap-2.5 text-[16px] font-medium text-fg">
         <Icon name="tabler:cloud-check" class="size-4.5 text-accent" aria-hidden="true" />
         Hindsight Cloud
       </p>
-      <p class="!mt-2 text-[14px]">
+      <p class="mt-2 text-[14px]">
         按用量计费，起步赠送免费额度，无固定月费或席位费。把任意客户端指向托管端点即可。
       </p>
     </div>

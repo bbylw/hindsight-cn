@@ -11,10 +11,12 @@ const { class: className = '' } = Astro.props;
 </div>
 
 <style>
-.prose-cn {
-  font-size: 16px;
-  min-width: 0;
-}
+  /* 放进 components 层：页面里的 Tailwind utilities 可依层序直接覆盖，无需 !important */
+  @layer components {
+    .prose-cn {
+      font-size: 16px;
+      min-width: 0;
+    }
 
   .prose-cn :global(h2) {
     margin-top: 3.5rem;
@@ -117,7 +119,7 @@ const { class: className = '' } = Astro.props;
     color: var(--color-fg);
   }
 
-  .prose-cn :global(code) {
+  .prose-cn :global(:not(pre) > code) {
     border: 1px solid var(--color-line);
     border-radius: 4px;
     background: var(--color-bg-sunken);
@@ -202,5 +204,6 @@ const { class: className = '' } = Astro.props;
 
   .prose-cn :global(.code-block) {
     margin-top: 1.6rem;
+  }
   }
 </style>

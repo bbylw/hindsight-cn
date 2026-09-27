@@ -70,10 +70,10 @@ const knowledgePageFacts = [
               style={`background:${type.colorVar}`}
               aria-hidden="true"
             />
-            <h3 class="!m-0 !text-[16px] font-semibold">{type.name}</h3>
+            <h3 class="m-0 text-[16px] font-semibold">{type.name}</h3>
             <span class="font-mono text-[11px] text-fg-subtle">{type.en}</span>
           </div>
-          <p class="!mt-3 text-[14.5px]">{type.summary}</p>
+          <p class="mt-3 text-[14.5px]">{type.summary}</p>
           <p class="mt-3.5 border-l border-line-strong pl-3.5 text-[13.5px] text-fg-muted">
             {type.example}
           </p>
@@ -91,7 +91,7 @@ const knowledgePageFacts = [
   {
     operations.map((op) => (
       <section>
-        <h3 id={op.key} class="!mt-12 flex items-center gap-2.5 !text-[19px]">
+        <h3 id={op.key} class="mt-12 flex items-center gap-2.5 text-[19px]">
           <span
             class="font-mono text-[12px] tracking-[0.1em] uppercase"
             style={`color:${op.colorVar}`}
@@ -187,11 +187,11 @@ const knowledgePageFacts = [
 
   <div class="plain-links mt-6 grid gap-4 lg:grid-cols-2">
     <article class="surface rounded-lg border border-line p-5">
-      <h3 class="!m-0 flex items-center gap-2 !text-[17px]">
+      <h3 class="m-0 flex items-center gap-2 text-[17px]">
         <Icon name="tabler:brain" class="size-4.5 text-accent" aria-hidden="true" />
         心智模型
       </h3>
-      <p class="!mt-3 text-[14.5px]">
+      <p class="mt-3 text-[14.5px]">
         对某个 bank 某个问题的常驻回答，比如「该用户的偏好是什么」。你只需定义一次问题，Hindsight
         负责写出答案、存储它，并在 bank 持续学习的过程中于后台重写它。
       </p>
@@ -205,17 +205,17 @@ const knowledgePageFacts = [
           ))
         }
       </dl>
-      <p class="!mt-4 text-[14px]">
+      <p class="mt-4 text-[14px]">
         <a href={doc('developer/mental-models')} target="_blank" rel="noreferrer noopener">心智模型文档</a>
       </p>
     </article>
 
     <article class="surface rounded-lg border border-line p-5">
-      <h3 class="!m-0 flex items-center gap-2 !text-[17px]">
+      <h3 class="m-0 flex items-center gap-2 text-[17px]">
         <Icon name="tabler:file-stack" class="size-4.5 text-accent" aria-hidden="true" />
         知识页
       </h3>
-      <p class="!mt-3 text-[14.5px]">
+      <p class="mt-3 text-[14.5px]">
         隐藏了机制的心智模型：由 bank 自行书写、关于自身的鲜活文档。你只需提供名称与一个问题，其余决策都是可覆盖的默认值。
       </p>
       <dl class="mt-4 grid gap-2.5">
@@ -228,7 +228,7 @@ const knowledgePageFacts = [
           ))
         }
       </dl>
-      <p class="!mt-4 text-[14px]">
+      <p class="mt-4 text-[14px]">
         <a href={doc('developer/knowledge-pages')} target="_blank" rel="noreferrer noopener">知识页文档</a>
       </p>
     </article>

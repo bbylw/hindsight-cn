@@ -47,18 +47,14 @@ client.recall(bank_id="my-bank", query="What does Alice do?")
 # Reflect：生成带倾向性的回答
 client.reflect(bank_id="my-bank", query="Tell me about Alice")`,
 
-  nodeClient: `const { HindsightClient } = require('@vectorize-io/hindsight-client');
+  nodeClient: `import { HindsightClient } from '@vectorize-io/hindsight-client';
 
-const main = async () => {
-  const client = new HindsightClient({ baseUrl: 'http://localhost:8888' });
+const client = new HindsightClient({ baseUrl: 'http://localhost:8888' });
 
-  await client.retain('my-bank', 'Alice loves hiking in Yosemite');
+await client.retain('my-bank', 'Alice loves hiking in Yosemite');
 
-  const results = await client.recall('my-bank', 'What does Alice like?');
-  console.log(results);
-};
-
-main();`,
+const results = await client.recall('my-bank', 'What does Alice like?');
+console.log(results);`,
 
   pythonEmbedded: `import os
 from hindsight import HindsightServer, HindsightClient

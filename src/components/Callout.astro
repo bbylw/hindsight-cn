@@ -25,15 +25,13 @@ const { icon, label } = config[variant];
     className,
   ]}
 >
-  <Icon name={icon} class="mt-0.5 size-[18px] shrink-0 text-accent" aria-hidden="true" />
+  <Icon
+    name={icon}
+    class:list={['mt-0.5 size-[18px] shrink-0', variant === 'warn' ? 'text-cat-4' : 'text-accent']}
+    aria-hidden="true"
+  />
   <div class="min-w-0 text-[15px] text-fg-muted">
-    {
-      title && (
-        <p class="mb-1 font-medium text-fg">
-          {title ?? label}
-        </p>
-      )
-    }
+    <p class="mb-1 font-medium text-fg">{title ?? label}</p>
     <div class="[&>p+p]:mt-3 [&>ul]:mt-2 [&>ol]:mt-2">
       <slot />
     </div>

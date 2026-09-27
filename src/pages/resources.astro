@@ -47,10 +47,10 @@ const packages = [
     {
       resourceLinks.map((group) => (
         <section class="rounded-lg border border-line bg-bg p-5">
-          <h3 class="!m-0 !text-[15.5px] font-semibold">{group.group}</h3>
-          <ul role="list" class="!mt-4 grid gap-2.5">
+          <h3 class="m-0 text-[15.5px] font-semibold">{group.group}</h3>
+          <ul role="list" class="mt-4 grid gap-2.5">
             {group.items.map((item) => (
-              <li class="!mt-0 !pl-0 before:hidden">
+              <li class="mt-0 pl-0 before:hidden">
                 <a
                   href={item.href}
                   target="_blank"

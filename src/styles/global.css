@@ -19,7 +19,7 @@
 
   /* 表面：宣纸暖白 + 墨色文字（elev 保持暖调，不用纯白，避免在暖底上发冷） */
   --color-bg: #faf8f3;
-  --color-bg-elev: #fffcf6;
+  --color-bg-elev: #fdf9f0;
   --color-bg-sunken: #f0e9db;
   --color-line: #e3d7c2;
   --color-line-soft: #ece3d0;
@@ -326,7 +326,7 @@
 
   /* 上游文档截图是浅色底，暗色下压暗避免整块刺眼 */
   [data-theme='dark'] .doc-shot {
-    filter: brightness(0.88) saturate(0.96);
+    filter: brightness(0.82) contrast(0.98) saturate(0.92);
   }
 
   /* 胶片颗粒：固定层，不参与滚动重绘 */
